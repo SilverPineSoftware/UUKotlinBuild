@@ -1,8 +1,23 @@
+
+def replaceWithSamplePart(String namespace) {
+    def parts = namespace.tokenize('.')
+    if (parts.size() >= 2) {
+        // Insert "sample" before the last part
+        def last = parts.remove(parts.size() - 1)
+        parts << "sample" << last
+        return parts.join('.')
+    }
+    else {
+        // If the namespace has less than 2 parts, just append
+        return "${namespace}.sample"
+    }
+}
+
 android {
     compileSdkVersion uu_target_sdk
 
     defaultConfig {
-        applicationId "${uu_namespace}.sample"
+        applicationId replaceWithSamplePart("${uu_namespace}")
         minSdkVersion uu_min_sdk
         targetSdkVersion uu_target_sdk
         versionCode 1
