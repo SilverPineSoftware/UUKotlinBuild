@@ -1,9 +1,3 @@
-plugins {
-    id 'com.android.application' version "${uu_gradle_version}" apply false
-    id 'com.android.library' version "${uu_gradle_version}" apply false
-    id 'org.jetbrains.kotlin.android' version "${uu_kotlin_version}" apply false
-    id 'io.github.gradle-nexus.publish-plugin' version "${uu_nexus_version}" apply true
-}
 
 ext["mavenCentralNexusUrl"] = System.getenv('MAVEN_CENTRAL_NEXUS_URL')
 ext["mavenCentralSnapshotUrl"] = System.getenv('MAVEN_CENTRAL_SNAPSHOT_URL')
