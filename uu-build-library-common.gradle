@@ -130,7 +130,7 @@ afterEvaluate {
                 // The coordinates of the library, being set from variables that
                 // we'll set up later
                 groupId PUBLISH_GROUP_ID
-                artifactId PUBLISH_ARTIFACT_ID
+                artifactId uu_publish_artifact_id
                 version BUILD_VERSION
 
                 // Two artifacts, the `aar` (or `jar`) and the sources
@@ -145,13 +145,13 @@ afterEvaluate {
 
                 // Mostly self-explanatory metadata
                 pom {
-                    name = PUBLISH_ARTIFACT_ID
-                    description = PUBLISH_DESCRIPTION
-                    url = 'https://github.com/SilverpineSoftware/' + SCM_MODULE_NAME
+                    name = uu_publish_artifact_id
+                    description = uu_publish_description
+                    url = 'https://github.com/SilverpineSoftware/' + uu_scm_module_name
                     licenses {
                         license {
                             name = 'MIT License'
-                            url = 'https://github.com/SilverpineSoftware/' + SCM_MODULE_NAME + '/blob/master/LICENSE'
+                            url = 'https://github.com/SilverpineSoftware/' + uu_scm_module_name + '/blob/master/LICENSE'
                         }
                     }
                     developers {
@@ -166,9 +166,9 @@ afterEvaluate {
                     // Version control info - if you're using GitHub, follow the
                     // format as seen here
                     scm {
-                        connection = 'scm:git:github.com/SilverpineSoftware/' + SCM_MODULE_NAME + '.git'
-                        developerConnection = 'scm:git:ssh://github.com/SilverpineSoftware/' + SCM_MODULE_NAME + '.git'
-                        url = 'https://github.com/SilverpineSoftware/' + SCM_MODULE_NAME + '/tree/main'
+                        connection = 'scm:git:github.com/SilverpineSoftware/' + uu_scm_module_name + '.git'
+                        developerConnection = 'scm:git:ssh://github.com/SilverpineSoftware/' + uu_scm_module_name + '.git'
+                        url = 'https://github.com/SilverpineSoftware/' + uu_scm_module_name + '/tree/main'
                     }
                 }
             }
