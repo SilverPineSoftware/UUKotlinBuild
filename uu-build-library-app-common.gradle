@@ -13,11 +13,13 @@ def replaceWithSamplePart(String namespace) {
     }
 }
 
+def sampleAppId = replaceWithSamplePart(uu_namespace)
+
 android {
     compileSdkVersion uu_target_sdk
 
     defaultConfig {
-        applicationId replaceWithSamplePart("${uu_namespace}")
+        applicationId sampleAppId
         minSdkVersion uu_min_sdk
         targetSdkVersion uu_target_sdk
         versionCode 1
@@ -42,5 +44,5 @@ android {
         jvmTarget = uu_java_version
     }
 
-    namespace "${uu_namespace}.sample"
+    namespace sampleAppId
 }
