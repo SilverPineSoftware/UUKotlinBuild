@@ -13,8 +13,8 @@ nexusPublishing {
             stagingProfileId = sonatypeStagingProfileId
             username = ossrhUsername
             password = ossrhPassword
-            nexusUrl.set(uri(mavenCentralNexusUrl))
-            snapshotRepositoryUrl.set(uri(mavenCentralSnapshotUrl))
+            nexusUrl.set(uri("${mavenCentralNexusUrl}"))
+            snapshotRepositoryUrl.set(uri("${mavenCentralSnapshotUrl}"))
         }
     }
 }
