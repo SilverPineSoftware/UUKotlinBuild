@@ -1,4 +1,4 @@
-name: UU Publish To Stage
+name: UU Publish Snapshot
 
 on:
   workflow_call:
