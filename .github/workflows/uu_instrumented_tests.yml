@@ -17,7 +17,7 @@ on:
         description: 'Gradle module path'
         required: false
         type: string
-        default: ':library'
+        default: 'library'
         
 jobs:
   instrumented-tests:
@@ -64,7 +64,7 @@ jobs:
 
       - name: Run Instrumented Tests (${{ inputs.configuration }})
         run: |
-          ./gradlew \
+          ./gradlew clean \
           :${{ inputs.module_path }}:${{ inputs.configuration }}DebugAndroidTest \
           -Pandroid.testInstrumentationRunnerArguments.notAnnotation=com.silverpine.uu.test.instrumented.annotations.UUInteractionRequired
           
