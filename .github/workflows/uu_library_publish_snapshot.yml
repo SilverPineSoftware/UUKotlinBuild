@@ -34,7 +34,7 @@ jobs:
     steps:
     
       - name: Prepare
-        uses: ./.github/actions/uu_library_publish_prepare.yml
+        uses: SilverPineSoftware/UUKotlinBuild/.github/workflows/uu_library_publish_prepare.yml@main
         with:
           module_path: ${{ inputs.module_path }}
           build_number: ${{ github.run_number }}
