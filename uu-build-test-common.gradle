@@ -66,12 +66,12 @@ android {
 
             groups {
                 // Middle of the road SDK for quick checks
-                uuQuick {
+                quick {
                     targetDevices.add(localDevices.pixel7api33)
                 }
 
                 // Small range of tests for CI builds
-                uuCi {
+                ci {
                     targetDevices.add(localDevices.pixel1api27)
                     targetDevices.add(localDevices.pixel4api30)
                     targetDevices.add(localDevices.pixel7api33)
@@ -79,7 +79,7 @@ android {
                 }
 
                 // Complete list of devices for full testing
-                uuComplete {
+                complete {
                     targetDevices.add(localDevices.pixel1api27)
                     targetDevices.add(localDevices.pixel2api28)
                     targetDevices.add(localDevices.pixel3api29)
