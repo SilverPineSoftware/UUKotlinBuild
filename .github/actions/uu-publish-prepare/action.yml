@@ -9,20 +9,24 @@ inputs:
   build_number:
     description: 'Build number for versioning'
     required: true
+  java_distribution:
+    description: 'Java distribution'
+    required: true
+  java_version:
+    description: 'Java version'
+    required: true
 
 runs:
   using: 'composite'
   steps:
     - name: Check out code
       uses: actions/checkout@v4
-      shell: bash
       
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
-        distribution: ${{ vars.UU_JAVA_DISTRIBUTION }}
-        java-version: ${{ vars.UU_JAVA_VERSION }}
-      shell: bash
+        distribution: ${{ inputs.java_distribution }}
+        java-version: ${{ inputs.java_version }}
       
     - name: Update Version
       run: ./scripts/update_version.sh
