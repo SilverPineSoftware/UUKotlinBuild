@@ -1,4 +1,4 @@
-name: UU Publish Snapshot
+name: UU Publish Release
 
 on:
   workflow_call:
@@ -37,8 +37,8 @@ jobs:
     name: Publish Snapshot
     runs-on: macos-latest
     steps:
-      - name: Publish to Maven Staging
-        run: ./gradlew publishToSonatype --max-workers 1      
+      - name: Publish to MavenCentral
+        run: ./gradlew publishReleasePublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository -PbuildSnapshot=false
         env:
           MAVEN_CENTRAL_NEXUS_URL: ${{ secrets.MAVEN_CENTRAL_NEXUS_URL }}
           MAVEN_CENTRAL_SNAPSHOT_URL: ${{ secrets.MAVEN_CENTRAL_SNAPSHOT_URL }}
@@ -48,3 +48,4 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+    
