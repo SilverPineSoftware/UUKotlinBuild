@@ -32,9 +32,8 @@ jobs:
     name: Publish Snapshot
     runs-on: macos-latest
     steps:
-    
       - name: Prepare
-        uses: SilverPineSoftware/UUKotlinBuild/.github/workflows/uu_library_publish_prepare.yml@main
+        uses: ./.github/actions/uu-publish-prepare
         with:
           module_path: ${{ inputs.module_path }}
           build_number: ${{ github.run_number }}

@@ -1,14 +1,14 @@
-name: UU Publish Prepare
+name: 'UU Publish Prepare'
 description: 'Prepare to publish a library'
 
-on:
-  workflow_call:
-    inputs:
-      module_path:
-        description: 'Gradle module path'
-        required: false
-        type: string
-        default: 'library'
+inputs:
+  module_path:
+    description: 'Gradle module path'
+    required: false
+    default: 'library'
+  build_number:
+    description: 'Build number for versioning'
+    required: true
 
 runs:
   using: 'composite'
@@ -23,11 +23,11 @@ runs:
         distribution: ${{ vars.UU_JAVA_DISTRIBUTION }}
         java-version: ${{ vars.UU_JAVA_VERSION }}
       shell: bash
-        
+      
     - name: Update Version
       run: ./scripts/update_version.sh
       env:
-        BUILD_NUMBER: ${{github.run_number}}
+        BUILD_NUMBER: ${{ inputs.build_number }}
       shell: bash
 
     - name: Clean
@@ -41,4 +41,4 @@ runs:
     - name: Assemble Library Release
       run: ./gradlew :${{ inputs.module_path }}:assembleRelease
       shell: bash
-      
+
