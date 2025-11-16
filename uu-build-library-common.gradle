@@ -210,5 +210,3 @@ android {
 
     namespace uu_namespace
 }
-
-apply from: "uu-build-test-common.gradle"
