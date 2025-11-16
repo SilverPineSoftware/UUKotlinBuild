@@ -5,11 +5,12 @@ on:
     inputs:
       configuration:
         description: 'Test configuration to run'
-        required: true
+        required: false
         type: string
+        default: 'quickGroup'
       runner:
         description: 'Runner environment'
-        required: true
+        required: false
         type: string
         default: 'ubuntu-latest'
       module_path:
