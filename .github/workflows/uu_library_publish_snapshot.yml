@@ -33,7 +33,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Prepare
-        uses: ./.github/actions/uu-publish-prepare
+        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-publish-prepare@main
         with:
           module_path: ${{ inputs.module_path }}
           build_number: ${{ github.run_number }}
