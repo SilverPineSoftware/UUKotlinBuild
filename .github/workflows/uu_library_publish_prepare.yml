@@ -1,4 +1,5 @@
 name: UU Publish Prepare
+description: 'Prepare to publish a library'
 
 on:
   workflow_call:
@@ -9,30 +10,35 @@ on:
         type: string
         default: 'library'
 
-jobs:
-  publish:
-    name: Prepare to Publish
-    runs-on: macos-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
+runs:
+  using: 'composite'
+  steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+      shell: bash
+      
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: ${{ vars.UU_JAVA_DISTRIBUTION }}
+        java-version: ${{ vars.UU_JAVA_VERSION }}
+      shell: bash
         
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: ${{ vars.UU_JAVA_DISTRIBUTION }}
-          java-version: ${{ vars.UU_JAVA_VERSION }}
-          
-      - name: Update Version
-        run: ./scripts/update_version.sh
-        env:
-          BUILD_NUMBER: ${{github.run_number}}
+    - name: Update Version
+      run: ./scripts/update_version.sh
+      env:
+        BUILD_NUMBER: ${{github.run_number}}
+      shell: bash
 
-      - name: Clean
-        run: ./gradlew clean
+    - name: Clean
+      run: ./gradlew clean
+      shell: bash
+    
+    - name: Test Library
+      run: ./gradlew :${{ inputs.module_path }}:test
+      shell: bash
+    
+    - name: Assemble Library Release
+      run: ./gradlew :${{ inputs.module_path }}:assembleRelease
+      shell: bash
       
-      - name: Test Library
-        run: ./gradlew :${{ inputs.module_path }}:test
-      
-      - name: Assemble Library Release
-        run: ./gradlew :${{ inputs.module_path }}:assembleRelease

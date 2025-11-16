@@ -28,16 +28,17 @@ on:
 
 jobs:
 
-  prepare:
-    uses: SilverPineSoftware/UUKotlinBuild/.github/workflows/uu_publish_prepare.yml@main
-    with:
-      module_path: ${{ inputs.module_path }}
-      
   publish-snapshot:
-    needs: [prepare]
     name: Publish Snapshot
     runs-on: macos-latest
     steps:
+    
+      - name: Prepare
+        uses: ./.github/actions/uu-publish-prepare
+        with:
+          module_path: ${{ inputs.module_path }}
+          build_number: ${{ github.run_number }}
+
       - name: Publish to Maven Staging
         run: ./gradlew publishToSonatype --max-workers 1      
         env:
