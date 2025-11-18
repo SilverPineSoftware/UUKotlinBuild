@@ -1,0 +1,65 @@
+name: UU Create Release
+permissions:
+  contents: write
+
+on:
+  workflow_call:
+    secrets:
+      GITHUB_TOKEN:
+        required: true
+  
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  upload-release-artifacts:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+
+      - name: Upload all artifacts to release
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Upload all downloaded artifacts to the release
+          for artifact_dir in */; do
+            if [ -d "$artifact_dir" ]; then
+              echo "Uploading artifact directory: $artifact_dir"
+              # Create a zip file from the artifact directory
+              zip -r "${artifact_dir%/}.zip" "$artifact_dir"
+              # Upload to release
+              gh release upload "${{ github.ref_name }}" "${artifact_dir%/}.zip" --clobber
+            fi
+          done
+          
+          # Also upload any zip files that might already exist
+          for zip_file in *.zip; do
+            if [ -f "$zip_file" ]; then
+              echo "Uploading zip file: $zip_file"
+              gh release upload "${{ github.ref_name }}" "$zip_file" --clobber
+            fi
+          done
+
+      
+      
