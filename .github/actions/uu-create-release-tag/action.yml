@@ -15,7 +15,7 @@ runs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        token: ${{ secrets.RELEASE_PAT }}
+        token: ${{ inputs.RELEASE_PAT }}
         fetch-depth: 0  # Fetch all history for tags
 
     - name: Validate version format
@@ -66,7 +66,7 @@ runs:
     - name: Create and push tag
       shell: bash
       env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
+        GITHUB_TOKEN: ${{ inputs.RELEASE_PAT }}
       run: |
         git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
         git tag -a "${{ inputs.version }}" -m "Release ${{ inputs.version }}"
