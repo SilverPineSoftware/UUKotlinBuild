@@ -1,5 +1,6 @@
 name: UU Tests
-permissions: read-all
+permissions:
+  contents: read
  
 on:
   workflow_call:

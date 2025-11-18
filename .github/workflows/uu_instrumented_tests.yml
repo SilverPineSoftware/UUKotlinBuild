@@ -1,5 +1,6 @@
 name: UU Instrumented Tests
-permissions: read-all
+permissions:
+  contents: read
  
 on:
   workflow_call:

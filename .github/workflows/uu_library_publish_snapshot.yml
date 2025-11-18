@@ -1,5 +1,6 @@
 name: UU Publish Snapshot
-permissions: read-all
+permissions:
+  contents: read
 
 on:
   workflow_call:

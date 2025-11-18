@@ -1,5 +1,6 @@
 name: UU Publish Release
-permissions: read-all
+permissions:
+  contents: read
 
 on:
   workflow_call:
