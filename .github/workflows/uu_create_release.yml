@@ -48,11 +48,11 @@ jobs:
           # Parse the JSON array of artifact names into a space-separated list
           ARTIFACTS=$(echo "$ARTIFACTS_TO_UPLOAD" | jq -r '.[]' | tr '\n' ' ')
           
-          # Function to check if artifact name matches any in the list
+          # Function to check if artifact name contains any fragment from the list
           should_upload() {
             local artifact_name=$1
-            for allowed_name in $ARTIFACTS; do
-              if [ "$artifact_name" = "$allowed_name" ]; then
+            for allowed_fragment in $ARTIFACTS; do
+              if [[ "$artifact_name" == *"$allowed_fragment"* ]]; then
                 return 0
               fi
             done
