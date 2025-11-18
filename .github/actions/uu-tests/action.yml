@@ -1,0 +1,50 @@
+name: 'UU Tests'
+description: 'Run unit tests for a library'
+
+inputs:
+  module_path:
+    description: 'Gradle module path'
+    required: false
+    default: 'library'
+  build_number:
+    description: 'Build number for versioning'
+    required: true
+  java_distribution:
+    description: 'Java distribution'
+    required: true
+  java_version:
+    description: 'Java version'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+      
+    - name: Read version from gradle.properties
+      id: get-version
+      run: |
+        VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
+        BUILD=${{ inputs.build_number }}
+        FULL_VERSION=$VERSION.$BUILD
+        echo "version=$FULL_VERSION" >> $GITHUB_OUTPUT
+        echo "Current version: $FULL_VERSION"
+      shell: bash
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: ${{ inputs.java_distribution }}
+        java-version: ${{ inputs.java_version }}
+          
+    - name: Run Unit Tests
+      run: ./gradlew clean :${{ inputs.module_path }}:test
+      shell: bash
+          
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-${{ steps.get-version.outputs.version }}
+        path: ${{ inputs.module_path }}/build/reports/tests
+

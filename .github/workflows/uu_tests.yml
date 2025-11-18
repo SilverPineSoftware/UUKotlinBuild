@@ -16,34 +16,15 @@ on:
         default: 'library'
         
 jobs:
-  instrumented-tests:
-    name: Run Android Instrumented Tests (${{ inputs.configuration }})
+  tests:
+    name: Run Unit Tests
     runs-on: ${{ inputs.runner }}
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-        
-      - name: Read version from gradle.properties
-        id: get-version
-        run: |
-          VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
-          BUILD=${{github.run_number}}
-          FULL_VERSION=$VERSION.$BUILD
-          echo "version=$FULL_VERSION" >> $GITHUB_OUTPUT
-          echo "Current version: $FULL_VERSION"
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      - name: Run Tests
+        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-tests@main
         with:
-          distribution: ${{ vars.UU_JAVA_DISTRIBUTION }}
-          java-version: ${{ vars.UU_JAVA_VERSION }}
-          
-      - name: Run Unit Tests
-        run: ./gradlew clean :${{ inputs.module_path }}:test
-          
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-${{ steps.get-version.outputs.version }}
-          path: ${{ inputs.module_path }}/build/reports/tests
+          module_path: ${{ inputs.module_path }}
+          build_number: ${{ github.run_number }}
+          java_distribution: ${{ vars.UU_JAVA_DISTRIBUTION }}
+          java_version: ${{ vars.UU_JAVA_VERSION }}
 

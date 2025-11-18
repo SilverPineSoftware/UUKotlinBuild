@@ -1,0 +1,81 @@
+name: 'UU Instrumented Tests'
+description: 'Run Android instrumented tests'
+
+inputs:
+  configuration:
+    description: 'Test configuration to run'
+    required: false
+    default: 'quickGroup'
+  module_path:
+    description: 'Gradle module path'
+    required: false
+    default: 'library'
+  build_number:
+    description: 'Build number for versioning'
+    required: true
+  java_distribution:
+    description: 'Java distribution'
+    required: true
+  java_version:
+    description: 'Java version'
+    required: true
+  runner:
+    description: 'Runner environment'
+    required: false
+    default: 'ubuntu-latest'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+      
+    - name: Read version from gradle.properties
+      id: get-version
+      run: |
+        VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
+        BUILD=${{ inputs.build_number }}
+        FULL_VERSION=$VERSION.$BUILD
+        echo "version=$FULL_VERSION" >> $GITHUB_OUTPUT
+        echo "Current version: $FULL_VERSION"
+      shell: bash
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: ${{ inputs.java_distribution }}
+        java-version: ${{ inputs.java_version }}
+          
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      
+    - name: Cache Android System Images
+      uses: actions/cache@v4
+      id: cache-system-images
+      with:
+        path: ${{ env.ANDROID_HOME }}/system-images
+        key: ${{ inputs.runner }}-android-system-images-v1
+        restore-keys: |
+          ${{ inputs.runner }}-android-system-images
+
+    - name: Enable KVM for Hardware Acceleration
+      if: inputs.runner == 'ubuntu-latest'
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+      shell: bash
+
+    - name: Run Instrumented Tests (${{ inputs.configuration }})
+      run: |
+        ./gradlew clean \
+        :${{ inputs.module_path }}:${{ inputs.configuration }}DebugAndroidTest \
+        -Pandroid.testInstrumentationRunnerArguments.notAnnotation=com.silverpine.uu.test.instrumented.annotations.UUInteractionRequired
+      shell: bash
+          
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: instrumented-test-results-${{ inputs.configuration }}-${{ steps.get-version.outputs.version }}
+        path: ${{ inputs.module_path }}/build/reports/androidTests
+
