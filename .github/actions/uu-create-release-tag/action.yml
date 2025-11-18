@@ -59,9 +59,18 @@ runs:
 
     - name: Commit version update
       shell: bash
+      id: commit
       run: |
         git add gradle.properties
-        git commit -m "Bump version to ${{ inputs.version }}"
+        
+        # Check if there are changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit - version is already ${{ inputs.version }}"
+          echo "committed=false" >> $GITHUB_OUTPUT
+        else
+          git commit -m "Bump version to ${{ inputs.version }}"
+          echo "committed=true" >> $GITHUB_OUTPUT
+        fi
         
     - name: Create and push tag
       shell: bash
@@ -70,7 +79,11 @@ runs:
       run: |
         git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
         git tag -a "${{ inputs.version }}" -m "Release ${{ inputs.version }}"
-        git push origin HEAD
+        
+        # Only push HEAD if there was a commit
+        if [ "${{ steps.commit.outputs.committed }}" == "true" ]; then
+          git push origin HEAD
+        fi
         git push origin "${{ inputs.version }}"
         
     - name: Summary
