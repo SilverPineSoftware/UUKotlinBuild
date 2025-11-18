@@ -5,7 +5,7 @@ permissions:
 on:
   workflow_call:
     secrets:
-      GITHUB_TOKEN:
+      UU_GITHUB_TOKEN: # needs different name that GITHUB_TOKEN
         required: true
   
 jobs:
@@ -22,7 +22,7 @@ jobs:
           draft: false
           prerelease: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.UU_GITHUB_TOKEN }}
 
   upload-release-artifacts:
     runs-on: ubuntu-latest
@@ -40,7 +40,7 @@ jobs:
       - name: Upload all artifacts to release
         if: always()
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.UU_GITHUB_TOKEN }}
         run: |
           # Upload all downloaded artifacts to the release
           for artifact_dir in */; do
