@@ -1,0 +1,20 @@
+name: UU Prepare Next Version
+permissions:
+  contents: write
+
+on:
+  workflow_call:
+    secrets:
+      RELEASE_PAT:
+        required: true
+  
+jobs:
+  prepare-next-version:
+    name: Prepare Next Version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare Next Version
+        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-prepare-next-version@main
+        with:
+          release_pat: ${{ secrets.RELEASE_PAT }}
+
