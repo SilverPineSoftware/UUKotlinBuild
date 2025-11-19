@@ -3,8 +3,8 @@ description: 'Update gradle.properties version and create a release tag'
 
 inputs:
   version:
-    description: 'Release version (e.g., 1.0.0)'
-    required: true
+    description: 'Release version (e.g., 1.0.0). If not specified, uses version from gradle.properties'
+    required: false
   release_pat:
     description: 'Github Personal Access Token'
     required: true
@@ -18,21 +18,52 @@ runs:
         token: ${{ inputs.release_pat }}
         fetch-depth: 0  # Fetch all history for tags
 
-    - name: Validate version format
+    - name: Determine version
       shell: bash
+      id: determine-version
       run: |
-        if [[ ! "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-          echo "Error: Version must be in format x.y.z (e.g., 1.0.0)"
+        if [ -n "${{ inputs.version }}" ]; then
+          # Use provided version
+          VERSION="${{ inputs.version }}"
+          echo "Using provided version: $VERSION"
+        else
+          # Read version from gradle.properties
+          GRADLE_PROPERTIES="gradle.properties"
+          
+          if [ ! -f "$GRADLE_PROPERTIES" ]; then
+            echo "::error::gradle.properties file not found"
+            exit 1
+          fi
+          
+          # Extract version line
+          VERSION_LINE=$(grep "^version=" "$GRADLE_PROPERTIES" || echo "")
+          if [ -z "$VERSION_LINE" ]; then
+            echo "::error::No version line found in gradle.properties"
+            exit 1
+          fi
+          
+          # Extract version number (format: version=1.2.3)
+          VERSION=$(echo "$VERSION_LINE" | sed 's/version=//')
+          echo "Using version from gradle.properties: $VERSION"
+        fi
+        
+        # Validate version format
+        if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "::error::Version must be in format x.y.z (e.g., 1.0.0), got: $VERSION"
           exit 1
         fi
+        
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Final version: $VERSION"
 
     - name: Check if tag already exists
       shell: bash
       id: check-tag
       run: |
-        if git rev-parse "${{ inputs.version }}" >/dev/null 2>&1; then
+        VERSION="${{ steps.determine-version.outputs.version }}"
+        if git rev-parse "$VERSION" >/dev/null 2>&1; then
           echo "exists=true" >> $GITHUB_OUTPUT
-          echo "Error: Tag ${{ inputs.version }} already exists"
+          echo "Error: Tag $VERSION already exists"
           exit 1
         else
           echo "exists=false" >> $GITHUB_OUTPUT
@@ -47,7 +78,7 @@ runs:
     - name: Update gradle.properties version
       shell: bash
       run: |
-        VERSION="${{ inputs.version }}"
+        VERSION="${{ steps.determine-version.outputs.version }}"
         GRADLE_PROPERTIES="gradle.properties"
         
         # Update version in gradle.properties
@@ -61,14 +92,15 @@ runs:
       shell: bash
       id: commit
       run: |
+        VERSION="${{ steps.determine-version.outputs.version }}"
         git add gradle.properties
         
         # Check if there are changes to commit
         if git diff --staged --quiet; then
-          echo "No changes to commit - version is already ${{ inputs.version }}"
+          echo "No changes to commit - version is already $VERSION"
           echo "committed=false" >> $GITHUB_OUTPUT
         else
-          git commit -m "Bump version to ${{ inputs.version }}"
+          git commit -m "Bump version to $VERSION"
           echo "committed=true" >> $GITHUB_OUTPUT
         fi
         
@@ -77,19 +109,21 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.release_pat }}
       run: |
+        VERSION="${{ steps.determine-version.outputs.version }}"
         git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-        git tag -a "${{ inputs.version }}" -m "Release ${{ inputs.version }}"
+        git tag -a "$VERSION" -m "Release $VERSION"
         
         # Only push HEAD if there was a commit
         if [ "${{ steps.commit.outputs.committed }}" == "true" ]; then
           git push origin HEAD
         fi
-        git push origin "${{ inputs.version }}"
+        git push origin "$VERSION"
         
     - name: Summary
       shell: bash
       run: |
-        echo "✅ Successfully created tag ${{ inputs.version }}"
+        VERSION="${{ steps.determine-version.outputs.version }}"
+        echo "✅ Successfully created tag $VERSION"
         echo "📦 The publish workflow will now be triggered automatically"
 
 

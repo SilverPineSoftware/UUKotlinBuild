@@ -6,8 +6,8 @@ on:
   workflow_call:
     inputs:
       version:
-        description: 'Release version (e.g., 1.0.0)'
-        required: true
+        description: 'Release version (e.g., 1.0.0). If not specified, uses version from gradle.properties'
+        required: false
         type: string
     secrets:
       RELEASE_PAT:
@@ -15,10 +15,11 @@ on:
   
 jobs:
   create-tag:
-    name: Create Release Tag (${{ inputs.version }})
+    name: Create Release Tag
     runs-on: ubuntu-latest
     steps:
       - name: Create Release Tag
+        id: create-tag
         uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-create-release-tag@main
         with:
           version: ${{ inputs.version }}
