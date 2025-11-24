@@ -9,6 +9,10 @@ on:
         description: 'Release version (e.g., 1.0.0). If not specified, uses version from gradle.properties'
         required: false
         type: string
+      gradle_properties_path:
+        description: 'Optional folder path where gradle.properties exists. Defaults to root if empty'
+        required: false
+        type: string
     secrets:
       RELEASE_PAT:
         required: true
@@ -23,5 +27,6 @@ jobs:
         uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-create-release-tag@main
         with:
           version: ${{ inputs.version }}
+          gradle_properties_path: ${{ inputs.gradle_properties_path }}
           release_pat: ${{ secrets.RELEASE_PAT }}
 

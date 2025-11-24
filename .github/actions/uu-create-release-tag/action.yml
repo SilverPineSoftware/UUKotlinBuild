@@ -5,6 +5,10 @@ inputs:
   version:
     description: 'Release version (e.g., 1.0.0). If not specified, uses version from gradle.properties'
     required: false
+  gradle_properties_path:
+    description: 'Optional folder path where gradle.properties exists. Defaults to root if empty'
+    required: false
+    default: ''
   release_pat:
     description: 'Github Personal Access Token'
     required: true
@@ -28,10 +32,18 @@ runs:
           echo "Using provided version: $VERSION"
         else
           # Read version from gradle.properties
-          GRADLE_PROPERTIES="gradle.properties"
+          GRADLE_PROPERTIES_DIR="${{ inputs.gradle_properties_path }}"
+          # Remove trailing slash if present
+          GRADLE_PROPERTIES_DIR="${GRADLE_PROPERTIES_DIR%/}"
+          # Construct full path
+          if [ -n "$GRADLE_PROPERTIES_DIR" ]; then
+            GRADLE_PROPERTIES="${GRADLE_PROPERTIES_DIR}/gradle.properties"
+          else
+            GRADLE_PROPERTIES="gradle.properties"
+          fi
           
           if [ ! -f "$GRADLE_PROPERTIES" ]; then
-            echo "::error::gradle.properties file not found"
+            echo "::error::gradle.properties file not found at: $GRADLE_PROPERTIES"
             exit 1
           fi
           
@@ -79,7 +91,15 @@ runs:
       shell: bash
       run: |
         VERSION="${{ steps.determine-version.outputs.version }}"
-        GRADLE_PROPERTIES="gradle.properties"
+        GRADLE_PROPERTIES_DIR="${{ inputs.gradle_properties_path }}"
+        # Remove trailing slash if present
+        GRADLE_PROPERTIES_DIR="${GRADLE_PROPERTIES_DIR%/}"
+        # Construct full path
+        if [ -n "$GRADLE_PROPERTIES_DIR" ]; then
+          GRADLE_PROPERTIES="${GRADLE_PROPERTIES_DIR}/gradle.properties"
+        else
+          GRADLE_PROPERTIES="gradle.properties"
+        fi
         
         # Update version in gradle.properties
         sed -i "s/^version=.*/version=${VERSION}/" "$GRADLE_PROPERTIES"
@@ -93,7 +113,16 @@ runs:
       id: commit
       run: |
         VERSION="${{ steps.determine-version.outputs.version }}"
-        git add gradle.properties
+        GRADLE_PROPERTIES_DIR="${{ inputs.gradle_properties_path }}"
+        # Remove trailing slash if present
+        GRADLE_PROPERTIES_DIR="${GRADLE_PROPERTIES_DIR%/}"
+        # Construct full path
+        if [ -n "$GRADLE_PROPERTIES_DIR" ]; then
+          GRADLE_PROPERTIES="${GRADLE_PROPERTIES_DIR}/gradle.properties"
+        else
+          GRADLE_PROPERTIES="gradle.properties"
+        fi
+        git add "$GRADLE_PROPERTIES"
         
         # Check if there are changes to commit
         if git diff --staged --quiet; then
