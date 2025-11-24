@@ -6,10 +6,14 @@ inputs:
     description: 'Test configuration to run'
     required: false
     default: 'quickGroup'
-  module_path:
-    description: 'Gradle module path'
+  module_name:
+    description: 'Gradle module name'
     required: false
-    default: 'library'
+    default: 'app'
+  module_folder:
+    description: 'Optional relative path to module source folder.'
+    required: false
+    default: '.'
   build_number:
     description: 'Build number for versioning'
     required: true
@@ -33,6 +37,9 @@ runs:
     - name: Read version from gradle.properties
       id: get-version
       run: |
+        if [ -n "${{ inputs.module_folder }}" ]; then
+          cd "${{ inputs.module_folder }}"
+        fi
         VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
         BUILD=${{ inputs.build_number }}
         FULL_VERSION=$VERSION.$BUILD
@@ -68,8 +75,11 @@ runs:
 
     - name: Run Instrumented Tests (${{ inputs.configuration }})
       run: |
+        if [ -n "${{ inputs.module_folder }}" ]; then
+          cd "${{ inputs.module_folder }}"
+        fi
         ./gradlew clean \
-        :${{ inputs.module_path }}:${{ inputs.configuration }}DebugAndroidTest \
+        :${{ inputs.module_name }}:${{ inputs.configuration }}DebugAndroidTest \
         -Pandroid.testInstrumentationRunnerArguments.notAnnotation=com.silverpine.uu.test.instrumented.annotations.UUInteractionRequired
       shell: bash
           
@@ -77,5 +87,5 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: instrumented-test-results-${{ inputs.configuration }}-${{ steps.get-version.outputs.version }}
-        path: ${{ inputs.module_path }}/build/reports/androidTests
+        path: ${{ inputs.module_folder }}/${{ inputs.module_name }}/build/reports/androidTests
 
