@@ -2,10 +2,14 @@ name: 'UU Tests'
 description: 'Run unit tests for a library'
 
 inputs:
-  module_path:
-    description: 'Gradle module path'
+  module_name:
+    description: 'Gradle module name'
     required: false
-    default: 'library'
+    default: 'app'
+  module_folder:
+    description: 'Optional relative path to module source folder.'
+    required: false
+    default: '.'
   build_number:
     description: 'Build number for versioning'
     required: true
@@ -25,6 +29,9 @@ runs:
     - name: Read version from gradle.properties
       id: get-version
       run: |
+        if [ -n "${{ inputs.module_folder }}" ]; then
+          cd "${{ inputs.module_folder }}"
+        fi
         VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
         BUILD=${{ inputs.build_number }}
         FULL_VERSION=$VERSION.$BUILD
@@ -37,14 +44,19 @@ runs:
       with:
         distribution: ${{ inputs.java_distribution }}
         java-version: ${{ inputs.java_version }}
-          
+  
     - name: Run Unit Tests
-      run: ./gradlew clean :${{ inputs.module_path }}:test
+      run: | 
+        if [ -n "${{ inputs.module_folder }}" ]; then
+          cd "${{ inputs.module_folder }}"
+        fi
+        ./gradlew clean :${{ inputs.module_name }}:test
+
       shell: bash
           
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
       with:
         name: test-results-${{ steps.get-version.outputs.version }}
-        path: ${{ inputs.module_path }}/build/reports/tests
-
+        path: ${{ inputs.module_folder }}/${{ inputs.module_path }}/build/reports/tests
+        
