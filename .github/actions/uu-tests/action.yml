@@ -58,5 +58,5 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: test-results-${{ steps.get-version.outputs.version }}
-        path: ${{ inputs.module_folder }}/${{ inputs.module_path }}/build/reports/tests
+        path: ${{ inputs.module_folder }}/${{ inputs.module_name }}/build/reports/tests
         
