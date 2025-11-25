@@ -9,7 +9,7 @@ inputs:
   module_folder:
     description: 'Optional relative path to module source folder.'
     required: false
-    default: '.'
+    default: '.'   
   java_distribution:
     description: 'Java distribution'
     required: true
@@ -57,7 +57,7 @@ runs:
       with:
         module_name: ${{ inputs.module_name }}
         module_path: ${{ inputs.module_path }}
-        build_suffix: ${{ inputs.build_number }}-${{ steps.get-branch.outputs.branch }}-SNAPSHOT
+        build_suffix: ${{ github.run_number }}-${{ steps.get-branch.outputs.branch }}-SNAPSHOT
         java_distribution: ${{ inputs.java_distribution }}
         java_version: ${{ inputs.java_version }}
 
