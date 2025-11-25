@@ -47,7 +47,7 @@ runs:
           sed -i.bak "s/^version=.*/version=${FULL_VERSION}/" gradle.properties
         fi
         
-        echo "version=$FULL_VERSION" >> $GITHUB_OUTPUT
+        echo "version=$FULL_VERSION" >> "$GITHUB_OUTPUT"
         echo "Full Version: $FULL_VERSION"
         echo "Output set: version=$FULL_VERSION"
       shell: bash

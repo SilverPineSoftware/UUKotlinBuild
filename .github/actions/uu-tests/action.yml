@@ -33,18 +33,7 @@ runs:
       with:
         module_folder: ${{ inputs.module_folder }}
         build_suffix: ${{ inputs.build_suffix }}
-    
-    - name: Read Version
-      id: read-version
-      run: |
-        if [ -n "${{ inputs.module_folder }}" ]; then
-          cd "${{ inputs.module_folder }}"
-        fi
-        VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "Version: $VERSION"
-      shell: bash
-      
+   
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
@@ -63,6 +52,6 @@ runs:
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
       with:
-        name: test-results-${{ steps.read-version.outputs.version }}
+        name: test-results-${{ steps.update-version.outputs.version }}
         path: ${{ inputs.module_folder }}/${{ inputs.module_name }}/build/reports/tests
         
