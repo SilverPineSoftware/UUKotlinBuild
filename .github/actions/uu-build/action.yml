@@ -24,6 +24,14 @@ inputs:
     description: 'Whether to bundle the release'
     required: false
     default: 'false'
+  signing_key:
+    description: 'Signing key'
+    required: false
+    default: ''
+  signing_password:
+    description: 'Signing password'
+    required: false
+    default: ''
 
 runs:
   using: 'composite'
@@ -53,6 +61,15 @@ runs:
         fi
         ./gradlew :${{ inputs.module_name }}:test
       shell: bash
+
+    - name: Setup Signing
+      if: inputs.signing_key != ''
+      run: | 
+        if [ -n "${{ inputs.module_folder }}" ]; then
+          cd "${{ inputs.module_folder }}"
+        fi
+        echo ${{ inputs.signing_key }} | base64 --decode >> release.keystore
+      shell: bash
     
     - name: Assemble Release
       run: | 
@@ -61,6 +78,8 @@ runs:
         fi
         ./gradlew :${{ inputs.module_name }}:assembleRelease
       shell: bash
+      env:
+        SIGNING_PASSWORD: ${{ inputs.signing_password }}
 
     - name: Bundle Release
       if: inputs.bundle_release == 'true'
@@ -70,6 +89,8 @@ runs:
         fi
         ./gradlew :${{ inputs.module_name }}:bundleRelease
       shell: bash
+      env:
+        SIGNING_PASSWORD: ${{ inputs.signing_password }}
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4

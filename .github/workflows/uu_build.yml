@@ -28,7 +28,15 @@ on:
           required: false
           type: boolean
           default: false
-        
+      signing_key:
+        description: 'Signing key'
+        required: false
+        type: string
+      signing_password:
+        description: 'Signing password'
+        required: false
+        type: string
+
 jobs:
   build:
     name: Do Build
@@ -43,4 +51,6 @@ jobs:
           java_distribution: ${{ inputs.java_distribution || vars.UU_JAVA_DISTRIBUTION }}
           java_version: ${{ inputs.java_version || vars.UU_JAVA_VERSION }}
           bundle_release: ${{ inputs.bundle_release }}
+          signing_key: ${{ inputs.signing_key }}
+          signing_password: ${{ inputs.signing_password }}
 
