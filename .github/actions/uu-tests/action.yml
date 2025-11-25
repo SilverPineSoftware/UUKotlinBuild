@@ -26,19 +26,14 @@ runs:
     - name: Check out code
       uses: actions/checkout@v4
       
-    - name: Read version from gradle.properties
-      id: get-version
-      run: |
-        if [ -n "${{ inputs.module_folder }}" ]; then
-          cd "${{ inputs.module_folder }}"
-        fi
-        VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
-        BUILD=${{ inputs.build_number }}
-        FULL_VERSION=$VERSION.$BUILD
-        echo "version=$FULL_VERSION" >> $GITHUB_OUTPUT
-        echo "Current version: $FULL_VERSION"
-      shell: bash
-
+    - name: Update Version
+      id: update-version
+      uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-update-version@main
+      with:
+        module_folder: ${{ inputs.module_folder }}
+        build_number: ${{ inputs.build_number }}
+        is_snapshot_build: false
+      
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
@@ -57,6 +52,6 @@ runs:
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
       with:
-        name: test-results-${{ steps.get-version.outputs.version }}
+        name: test-results-${{ steps.update-version.outputs.version }}
         path: ${{ inputs.module_folder }}/${{ inputs.module_name }}/build/reports/tests
         
