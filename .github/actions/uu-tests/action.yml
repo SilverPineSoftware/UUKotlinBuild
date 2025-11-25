@@ -19,6 +19,10 @@ inputs:
   java_version:
     description: 'Java version'
     required: true
+  is_snapshot_build:
+    description: 'Is snapshot build'
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
@@ -32,7 +36,7 @@ runs:
       with:
         module_folder: ${{ inputs.module_folder }}
         build_number: ${{ inputs.build_number }}
-        is_snapshot_build: false
+        is_snapshot_build: ${{ inputs.is_snapshot_build }}
       
     - name: Setup Java
       uses: actions/setup-java@v4
