@@ -64,11 +64,8 @@ runs:
 
     - name: Setup Signing
       if: inputs.signing_key != ''
-      run: | 
-        if [ -n "${{ inputs.module_folder }}" ]; then
-          cd "${{ inputs.module_folder }}"
-        fi
-        echo ${{ inputs.signing_key }} | base64 --decode >> release.keystore
+      run: |
+        echo ${{ inputs.signing_key }} | base64 --decode >> ${{ inputs.module_folder }}/${{ inputs.module_name }}/release.keystore
       shell: bash
     
     - name: Assemble Release
