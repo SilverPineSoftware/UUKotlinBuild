@@ -58,16 +58,16 @@ runs:
         java_distribution: ${{ inputs.java_distribution }}
         java_version: ${{ inputs.java_version }}
 
-    # - name: Publish to Maven Staging
-    #   run: ./gradlew publishToSonatype --max-workers 1
-    #   env:
-    #     MAVEN_CENTRAL_NEXUS_URL: ${{ inputs.maven_central_nexus_url }}
-    #     MAVEN_CENTRAL_SNAPSHOT_URL: ${{ inputs.maven_central_snapshot_url }}
-    #     OSSRH_USERNAME: ${{ inputs.ossrh_username }}
-    #     OSSRH_PASSWORD: ${{ inputs.ossrh_password }}
-    #     SIGNING_KEY_ID: ${{ inputs.signing_key_id }}
-    #     SIGNING_PASSWORD: ${{ inputs.signing_password }}
-    #     SIGNING_KEY: ${{ inputs.signing_key }}
-    #     SONATYPE_STAGING_PROFILE_ID: ${{ inputs.sonatype_staging_profile_id }}
-    #   shell: bash
+    - name: Publish to Maven Staging
+      run: ./gradlew publishToSonatype --max-workers 1
+      env:
+        MAVEN_CENTRAL_NEXUS_URL: ${{ inputs.maven_central_nexus_url }}
+        MAVEN_CENTRAL_SNAPSHOT_URL: ${{ inputs.maven_central_snapshot_url }}
+        OSSRH_USERNAME: ${{ inputs.ossrh_username }}
+        OSSRH_PASSWORD: ${{ inputs.ossrh_password }}
+        SIGNING_KEY_ID: ${{ inputs.signing_key_id }}
+        SIGNING_PASSWORD: ${{ inputs.signing_password }}
+        SIGNING_KEY: ${{ inputs.signing_key }}
+        SONATYPE_STAGING_PROFILE_ID: ${{ inputs.sonatype_staging_profile_id }}
+      shell: bash
 
