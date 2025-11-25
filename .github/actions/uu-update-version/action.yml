@@ -13,6 +13,10 @@ inputs:
     description: 'Whether the build is a snapshot. If true the version will have {branch}-SNAPSHOT appended to it.'
     required: false
     default: 'false'
+
+outputs:
+  version:
+    description: 'The full version string that was set in gradle.properties'
     
 runs:
   using: 'composite'
