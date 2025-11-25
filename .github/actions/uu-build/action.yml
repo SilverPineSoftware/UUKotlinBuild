@@ -39,20 +39,36 @@ runs:
         java_version: ${{ inputs.java_version }}
   
     - name: Clean
-      run: ./gradlew clean
+      run: | 
+        if [ -n "${{ inputs.module_folder }}" ]; then
+          cd "${{ inputs.module_folder }}"
+        fi
+        ./gradlew clean
       shell: bash
     
     - name: Run Unit Tests
-      run: ./gradlew :${{ inputs.module_path }}:test
+      run: | 
+        if [ -n "${{ inputs.module_folder }}" ]; then
+          cd "${{ inputs.module_folder }}"
+        fi
+        ./gradlew :${{ inputs.module_name }}:test
       shell: bash
     
     - name: Assemble Release
-      run: ./gradlew :${{ inputs.module_path }}:assembleRelease
+      run: | 
+        if [ -n "${{ inputs.module_folder }}" ]; then
+          cd "${{ inputs.module_folder }}"
+        fi
+        ./gradlew :${{ inputs.module_name }}:assembleRelease
       shell: bash
 
     - name: Bundle Release
       if: inputs.bundle_release == 'true'
-      run: ./gradlew :${{ inputs.module_path }}:bundleRelease
+      run: | 
+        if [ -n "${{ inputs.module_folder }}" ]; then
+          cd "${{ inputs.module_folder }}"
+        fi
+        ./gradlew :${{ inputs.module_name }}:bundleRelease
       shell: bash
 
     - name: Upload Artifacts
