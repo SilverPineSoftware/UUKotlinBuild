@@ -1,0 +1,50 @@
+name: 'UU Update Version'
+description: 'Updates the version in the gradle.properties file'
+
+inputs:
+  module_name:
+    description: 'Gradle module name'
+    required: false
+    default: 'app'
+  module_folder:
+    description: 'Optional relative path to module source folder.'
+    required: false
+    default: '.'
+  build_number:
+    description: 'Build number for versioning'
+    required: true
+  is_snapshot_build:
+    description: 'Whether the build is a snapshot. If true the version will have {branch}-SNAPSHOT appended to it.'
+    required: false
+    default: 'false'
+    
+runs:
+  using: 'composite'
+  steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+      
+    - name: Read version from gradle.properties
+      id: get-version
+      run: |
+        if [ -n "${{ inputs.module_folder }}" ]; then
+          cd "${{ inputs.module_folder }}"
+        fi
+        VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
+        BUILD=${{ inputs.build_number }}
+        FULL_VERSION=$VERSION.$BUILD
+        
+        if [ -n "${{ inputs.is_snapshot_build }}" ]; then
+          BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          FULL_VERSION=${FULL_VERSION}-${BRANCH}-SNAPSHOT
+        fi
+        
+        echo "full_version=$FULL_VERSION" >> $GITHUB_OUTPUT
+        echo "Full Version: $FULL_VERSION"
+        
+        sed -i.bak "s/^version=.*/version=${FULL_VERSION}/" gradle.properties
+        
+        CHECK_VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
+        echo "Check Version: ${CHECK_VERSION}"
+      shell: bash
+        
