@@ -21,6 +21,11 @@ inputs:
     required: false
     default: ''
 
+outputs:
+  version:
+    description: 'The full version string that was set in gradle.properties'
+    value: ${{ steps.update-version.outputs.version }}
+
 runs:
   using: 'composite'
   steps:
