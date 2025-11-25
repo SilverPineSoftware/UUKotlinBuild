@@ -14,13 +14,11 @@ inputs:
 outputs:
   version:
     description: 'The full version string that was set in gradle.properties'
+    value: ${{ steps.get-version.outputs.version }}
 
 runs:
   using: 'composite'
   steps:
-    - name: Check out code
-      uses: actions/checkout@v4
-      
     - name: Read version from gradle.properties
       id: get-version
       run: |
