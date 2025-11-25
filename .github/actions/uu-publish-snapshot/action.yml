@@ -56,7 +56,7 @@ runs:
       uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-build@main
       with:
         module_name: ${{ inputs.module_name }}
-        module_path: ${{ inputs.module_path }}
+        module_folder: ${{ inputs.module_folder }}
         build_suffix: ${{ github.run_number }}-${{ steps.get-branch.outputs.branch }}-SNAPSHOT
         java_distribution: ${{ inputs.java_distribution }}
         java_version: ${{ inputs.java_version }}
