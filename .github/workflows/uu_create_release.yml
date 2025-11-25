@@ -9,7 +9,7 @@ on:
         description: 'List of artifact names to upload to release (JSON array)'
         required: false
         type: string
-        default: '["test-results"]'
+        default: '["test-results", "build-artifacts"]'
     secrets:
       UU_GITHUB_TOKEN: # needs different name that GITHUB_TOKEN
         required: true
