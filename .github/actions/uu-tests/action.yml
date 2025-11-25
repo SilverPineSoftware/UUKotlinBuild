@@ -24,21 +24,15 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Check out code
-      uses: actions/checkout@v4
-      
-    - name: Update Version
-      id: update-version
-      uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-update-version@main
+    - name: Prepare Build
+      id: prepare
+      uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-build-prepare@main
       with:
+        module_name: ${{ inputs.module_name }}
         module_folder: ${{ inputs.module_folder }}
         build_suffix: ${{ inputs.build_suffix }}
-   
-    - name: Setup Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: ${{ inputs.java_distribution }}
-        java-version: ${{ inputs.java_version }}
+        java_distribution: ${{ inputs.java_distribution }}
+        java_version: ${{ inputs.java_version }}
   
     - name: Run Unit Tests
       run: | 
@@ -52,6 +46,6 @@ runs:
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
       with:
-        name: test-results-${{ steps.update-version.outputs.version }}
+        name: test-results-${{ steps.prepare.outputs.version }}
         path: ${{ inputs.module_folder }}/${{ inputs.module_name }}/build/reports/tests
         
