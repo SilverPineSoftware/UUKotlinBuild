@@ -1,0 +1,46 @@
+name: UU Build
+permissions:
+  contents: read
+ 
+on:
+  workflow_call:
+    inputs:
+      module_name:
+        description: 'Gradle module name'
+        required: false
+        type: string
+        default: 'app'
+      module_folder:
+        description: 'Gradle module folder'
+        required: false
+        type: string
+        default: '.'
+      java_distribution:
+        description: 'Java distribution'
+        required: false
+        type: string
+      java_version:
+        description: 'Java version'
+        required: false
+        type: string
+      bundle_release:
+          description: 'Whether to bundle the release'
+          required: false
+          type: boolean
+          default: false
+        
+jobs:
+  build:
+    name: Do Build
+    runs-on: macos-latest
+    steps:
+      - name: Build
+        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-build@main
+        with:
+          module_name: ${{ inputs.module_name }}
+          module_folder: ${{ inputs.module_folder }}
+          build_suffix: ${{ github.run_number }}
+          java_distribution: ${{ inputs.java_distribution || vars.UU_JAVA_DISTRIBUTION }}
+          java_version: ${{ inputs.java_version || vars.UU_JAVA_VERSION }}
+          bundle_release: ${{ inputs.bundle_release }}
+
