@@ -10,19 +10,16 @@ inputs:
     description: 'Optional relative path to module source folder.'
     required: false
     default: '.'
-  build_number:
-    description: 'Build number for versioning'
-    required: true
   java_distribution:
     description: 'Java distribution'
     required: true
   java_version:
     description: 'Java version'
     required: true
-  is_snapshot_build:
-    description: 'Is snapshot build'
+  build_suffix:
+    description: 'Build Suffix'
     required: false
-    default: 'false'
+    default: ''
 
 runs:
   using: 'composite'
@@ -35,8 +32,7 @@ runs:
       uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-update-version@main
       with:
         module_folder: ${{ inputs.module_folder }}
-        build_number: ${{ inputs.build_number }}
-        is_snapshot_build: ${{ inputs.is_snapshot_build }}
+        build_suffix: ${{ inputs.build_suffix }}
       
     - name: Setup Java
       uses: actions/setup-java@v4

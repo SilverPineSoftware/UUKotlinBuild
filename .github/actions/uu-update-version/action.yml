@@ -6,18 +6,16 @@ inputs:
     description: 'Optional relative path to module source folder.'
     required: false
     default: '.'
-  build_number:
-    description: 'Build number for versioning'
-    required: true
-  is_snapshot_build:
-    description: 'Whether the build is a snapshot. If true the version will have {branch}-SNAPSHOT appended to it.'
+  build_suffix:
+    description: 'Build Suffix'
     required: false
-    default: 'false'
-
+    default: ''
+    
 outputs:
   version:
     description: 'The full version string that was set in gradle.properties'
-    
+    value: ''
+
 runs:
   using: 'composite'
   steps:
@@ -31,19 +29,16 @@ runs:
           cd "${{ inputs.module_folder }}"
         fi
         VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
-        BUILD=${{ inputs.build_number }}
-        FULL_VERSION=$VERSION.$BUILD
+        BUILD_SUFFIX=${{ inputs.build_suffix }}
+        FULL_VERSION=$VERSION
         
-        if [ "${{ inputs.is_snapshot_build }}" ]; then
-          BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          FULL_VERSION=${FULL_VERSION}-${BRANCH}-SNAPSHOT
+        if [ "${{ inputs.build_suffix }}" ]; then
+          FULL_VERSION=$VERSION.$BUILD_SUFFIX
+          sed -i.bak "s/^version=.*/version=${FULL_VERSION}/" gradle.properties
         fi
         
         echo "version=$FULL_VERSION" >> $GITHUB_OUTPUT
         echo "Full Version: $FULL_VERSION"
-        
-        sed -i.bak "s/^version=.*/version=${FULL_VERSION}/" gradle.properties
-        
         CHECK_VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
         echo "Check Version: ${CHECK_VERSION}"
       shell: bash
