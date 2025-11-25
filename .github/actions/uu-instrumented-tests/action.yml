@@ -14,9 +14,10 @@ inputs:
     description: 'Optional relative path to module source folder.'
     required: false
     default: '.'
-  build_number:
-    description: 'Build number for versioning'
-    required: true
+  build_suffix:
+    description: 'Build Suffix'
+    required: false
+    default: ''
   java_distribution:
     description: 'Java distribution'
     required: true
@@ -31,28 +32,16 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Check out code
-      uses: actions/checkout@v4
-      
-    - name: Read version from gradle.properties
-      id: get-version
-      run: |
-        if [ -n "${{ inputs.module_folder }}" ]; then
-          cd "${{ inputs.module_folder }}"
-        fi
-        VERSION=$(grep "^version=" gradle.properties | cut -d'=' -f2)
-        BUILD=${{ inputs.build_number }}
-        FULL_VERSION=$VERSION.$BUILD
-        echo "version=$FULL_VERSION" >> $GITHUB_OUTPUT
-        echo "Current version: $FULL_VERSION"
-      shell: bash
-
-    - name: Setup Java
-      uses: actions/setup-java@v4
+    - name: Prepare Build
+      id: prepare
+      uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-build-prepare@main
       with:
-        distribution: ${{ inputs.java_distribution }}
-        java-version: ${{ inputs.java_version }}
-          
+        module_name: ${{ inputs.module_name }}
+        module_folder: ${{ inputs.module_folder }}
+        build_suffix: ${{ inputs.build_suffix }}
+        java_distribution: ${{ inputs.java_distribution }}
+        java_version: ${{ inputs.java_version }}
+  
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
       
@@ -86,6 +75,6 @@ runs:
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
       with:
-        name: instrumented-test-results-${{ inputs.configuration }}-${{ steps.get-version.outputs.version }}
+        name: instrumented-test-results-${{ inputs.configuration }}-${{ steps.prepare.outputs.version }}
         path: ${{ inputs.module_folder }}/${{ inputs.module_name }}/build/reports/androidTests
 
