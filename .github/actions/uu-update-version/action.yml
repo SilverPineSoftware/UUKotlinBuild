@@ -34,7 +34,7 @@ runs:
         BUILD=${{ inputs.build_number }}
         FULL_VERSION=$VERSION.$BUILD
         
-        if [ -n "${{ inputs.is_snapshot_build }}" ]; then
+        if [ "${{ inputs.is_snapshot_build }}" ]; then
           BRANCH=$(git rev-parse --abbrev-ref HEAD)
           FULL_VERSION=${FULL_VERSION}-${BRANCH}-SNAPSHOT
         fi
