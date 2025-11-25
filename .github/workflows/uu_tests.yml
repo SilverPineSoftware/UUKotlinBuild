@@ -32,7 +32,7 @@ on:
         description: 'Is snapshot build'
         required: false
         type: boolean
-        default: 'false'
+        default: false
         
 jobs:
   tests:
