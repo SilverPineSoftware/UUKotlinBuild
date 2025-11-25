@@ -10,6 +10,10 @@ inputs:
     description: 'Optional relative path to module source folder.'
     required: false
     default: '.'   
+  build_suffix:
+    description: 'Build Suffix'
+    required: false
+    default: ''
   java_distribution:
     description: 'Java distribution'
     required: true
@@ -44,20 +48,13 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Extract git branch
-      id: get-branch
-      run: |
-        BRANCH="${{ github.ref_name }}"
-        BRANCH_SANITIZED=$(echo "$BRANCH" | tr '/' '-')
-        echo "branch=$BRANCH_SANITIZED" >> $GITHUB_OUTPUT
-      shell: bash
 
     - name: Build
       uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-build@main
       with:
         module_name: ${{ inputs.module_name }}
         module_folder: ${{ inputs.module_folder }}
-        build_suffix: ${{ github.run_number }}-${{ steps.get-branch.outputs.branch }}-SNAPSHOT
+        build_suffix: ${{ inputs.build_suffix }}
         java_distribution: ${{ inputs.java_distribution }}
         java_version: ${{ inputs.java_version }}
 
