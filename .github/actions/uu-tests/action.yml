@@ -42,10 +42,17 @@ runs:
         ./gradlew clean :${{ inputs.module_name }}:test
 
       shell: bash
+
+    - name: Extract repo name
+      id: repo-name
+      run: |
+        REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+        echo "name=$REPO_NAME" >> $GITHUB_OUTPUT
+      shell: bash
           
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
       with:
-        name: test-results-${{ steps.prepare.outputs.version }}
+        name: ${{ steps.repo-name.outputs.name }}-test-results-${{ steps.prepare.outputs.version }}
         path: ${{ inputs.module_folder }}/${{ inputs.module_name }}/build/reports/tests
         

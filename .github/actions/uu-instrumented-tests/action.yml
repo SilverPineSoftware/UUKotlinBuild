@@ -71,10 +71,17 @@ runs:
         :${{ inputs.module_name }}:${{ inputs.configuration }}DebugAndroidTest \
         -Pandroid.testInstrumentationRunnerArguments.notAnnotation=com.silverpine.uu.test.instrumented.annotations.UUInteractionRequired
       shell: bash
+
+    - name: Extract repo name
+      id: repo-name
+      run: |
+        REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+        echo "name=$REPO_NAME" >> $GITHUB_OUTPUT
+      shell: bash
           
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
       with:
-        name: instrumented-test-results-${{ inputs.configuration }}-${{ steps.prepare.outputs.version }}
+        name: ${{ steps.repo-name.outputs.name }}-instrumented-test-results-${{ inputs.configuration }}-${{ steps.prepare.outputs.version }}
         path: ${{ inputs.module_folder }}/${{ inputs.module_name }}/build/reports/androidTests
 

@@ -89,9 +89,16 @@ runs:
       env:
         SIGNING_PASSWORD: ${{ inputs.signing_password }}
 
+    - name: Extract repo name
+      id: repo-name
+      run: |
+        REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+        echo "name=$REPO_NAME" >> $GITHUB_OUTPUT
+      shell: bash
+
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: build-artifacts-${{ steps.prepare.outputs.version }}
+        name: ${{ steps.repo-name.outputs.name }}-build-artifacts-${{ steps.prepare.outputs.version }}
         path: ${{ inputs.module_folder }}/${{ inputs.module_name }}/build/outputs
 
