@@ -2,13 +2,14 @@ name: 'UU Publish Release'
 description: 'Publish release to Maven Central'
 
 inputs:
-  module_path:
-    description: 'Gradle module path'
+  module_name:
+    description: 'Gradle module name'
     required: false
-    default: 'library'
-  build_number:
-    description: 'Build number for versioning'
-    required: true
+    default: 'app'
+  module_folder:
+    description: 'Optional relative path to module source folder.'
+    required: false
+    default: '.'
   java_distribution:
     description: 'Java distribution'
     required: true
@@ -43,11 +44,11 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Prepare
-      uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-publish-prepare@main
+    - name: Build
+      uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-build@main
       with:
+        module_name: ${{ inputs.module_name }}
         module_path: ${{ inputs.module_path }}
-        build_number: ${{ inputs.build_number }}
         java_distribution: ${{ inputs.java_distribution }}
         java_version: ${{ inputs.java_version }}
 

@@ -5,11 +5,21 @@ permissions:
 on:
   workflow_call:
     inputs:
-      module_path:
-        description: 'Gradle module path'
+      module_name:
+        description: 'Gradle module name'
         required: false
         type: string
         default: 'library'
+      module_folder:
+        description: 'Gradle module folder'
+        required: false
+        type: string
+        default: '.'
+      build_suffix:
+        description: 'Build Suffix'
+        required: false
+        type: string
+        default: ''
     secrets:
       MAVEN_CENTRAL_NEXUS_URL:
         required: true
@@ -37,8 +47,9 @@ jobs:
       - name: Publish Release
         uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-publish-release@main
         with:
-          module_path: ${{ inputs.module_path }}
-          build_number: ${{ github.run_number }}
+          module_name: ${{ inputs.module_name }}
+          module_folder: ${{ inputs.module_folder }}
+          build_suffix: ${{ inputs.build_suffix }}
           java_distribution: ${{ vars.UU_JAVA_DISTRIBUTION }}
           java_version: ${{ vars.UU_JAVA_VERSION }}
           maven_central_nexus_url: ${{ secrets.MAVEN_CENTRAL_NEXUS_URL }}
