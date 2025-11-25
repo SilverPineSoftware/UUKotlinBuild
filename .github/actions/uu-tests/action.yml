@@ -33,6 +33,14 @@ runs:
       with:
         module_folder: ${{ inputs.module_folder }}
         build_suffix: ${{ inputs.build_suffix }}
+    
+    - name: Debug Version Output
+      run: |
+        echo "Version output: ${{ steps.update-version.outputs.version }}"
+        if [ -z "${{ steps.update-version.outputs.version }}" ]; then
+          echo "Warning: Version output is empty"
+        fi
+      shell: bash
       
     - name: Setup Java
       uses: actions/setup-java@v4
