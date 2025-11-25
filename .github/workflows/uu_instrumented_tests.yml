@@ -33,6 +33,10 @@ on:
         description: 'Java version'
         required: false
         type: string
+      build_suffix:
+        description: 'Build suffix for versioning'
+        required: false
+        type: string
         
 jobs:
   instrumented-tests:
@@ -45,7 +49,7 @@ jobs:
           configuration: ${{ inputs.configuration }}
           module_name: ${{ inputs.module_name }}
           module_folder: ${{ inputs.module_folder }}
-          build_suffix: ${{ github.run_number }}
+          build_suffix: ${{ inputs.build_suffix || github.run_number }}
           java_distribution: ${{ inputs.java_distribution || vars.UU_JAVA_DISTRIBUTION }}
           java_version: ${{ inputs.java_version || vars.UU_JAVA_VERSION }}
           runner: ${{ inputs.runner }}
