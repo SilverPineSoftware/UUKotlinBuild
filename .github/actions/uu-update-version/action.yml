@@ -2,10 +2,6 @@ name: 'UU Update Version'
 description: 'Updates the version in the gradle.properties file'
 
 inputs:
-  module_name:
-    description: 'Gradle module name'
-    required: false
-    default: 'app'
   module_folder:
     description: 'Optional relative path to module source folder.'
     required: false
@@ -39,7 +35,7 @@ runs:
           FULL_VERSION=${FULL_VERSION}-${BRANCH}-SNAPSHOT
         fi
         
-        echo "full_version=$FULL_VERSION" >> $GITHUB_OUTPUT
+        echo "version=$FULL_VERSION" >> $GITHUB_OUTPUT
         echo "Full Version: $FULL_VERSION"
         
         sed -i.bak "s/^version=.*/version=${FULL_VERSION}/" gradle.properties
