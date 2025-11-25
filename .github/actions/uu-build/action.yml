@@ -99,6 +99,6 @@ runs:
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.repo-name.outputs.name }}-build-artifacts-${{ steps.prepare.outputs.version }}
+        name: ${{ steps.repo-name.outputs.name }}-${{ inputs.module_name }}-build-artifacts-${{ steps.prepare.outputs.version }}
         path: ${{ inputs.module_folder }}/${{ inputs.module_name }}/build/outputs
 

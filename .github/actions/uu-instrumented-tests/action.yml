@@ -82,6 +82,6 @@ runs:
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.repo-name.outputs.name }}-instrumented-test-results-${{ inputs.configuration }}-${{ steps.prepare.outputs.version }}
+        name: ${{ steps.repo-name.outputs.name }}-${{ inputs.module_name }}-instrumented-test-results-${{ inputs.configuration }}-${{ steps.prepare.outputs.version }}
         path: ${{ inputs.module_folder }}/${{ inputs.module_name }}/build/reports/androidTests
 
