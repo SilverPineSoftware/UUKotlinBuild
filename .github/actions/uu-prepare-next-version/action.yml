@@ -5,6 +5,10 @@ inputs:
   release_pat:
     description: 'Github Personal Access Token'
     required: true
+  gradle_properties_path:
+    description: 'Optional folder path where gradle.properties exists. Defaults to root if empty'
+    required: false
+    default: ''
 
 runs:
   using: 'composite'
@@ -59,7 +63,15 @@ runs:
       id: read-version
       if: steps.verify-branches.outputs.branches_match == 'true'
       run: |
-        GRADLE_PROPERTIES="gradle.properties"
+        GRADLE_PROPERTIES_DIR="${{ inputs.gradle_properties_path }}"
+        # Remove trailing slash if present
+        GRADLE_PROPERTIES_DIR="${GRADLE_PROPERTIES_DIR%/}"
+        # Construct full path
+        if [ -n "$GRADLE_PROPERTIES_DIR" ]; then
+          GRADLE_PROPERTIES="${GRADLE_PROPERTIES_DIR}/gradle.properties"
+        else
+          GRADLE_PROPERTIES="gradle.properties"
+        fi
         
         if [ ! -f "$GRADLE_PROPERTIES" ]; then
           echo "::error::gradle.properties file not found"
