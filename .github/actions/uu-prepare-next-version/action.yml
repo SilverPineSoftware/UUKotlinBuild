@@ -115,7 +115,21 @@ runs:
       shell: bash
       if: steps.verify-branches.outputs.branches_match == 'true'
       run: |
-        GRADLE_PROPERTIES="gradle.properties"
+        GRADLE_PROPERTIES_DIR="${{ inputs.gradle_properties_path }}"
+        # Remove trailing slash if present
+        GRADLE_PROPERTIES_DIR="${GRADLE_PROPERTIES_DIR%/}"
+        # Construct full path
+        if [ -n "$GRADLE_PROPERTIES_DIR" ]; then
+          GRADLE_PROPERTIES="${GRADLE_PROPERTIES_DIR}/gradle.properties"
+        else
+          GRADLE_PROPERTIES="gradle.properties"
+        fi
+        
+        if [ ! -f "$GRADLE_PROPERTIES" ]; then
+          echo "::error::gradle.properties file not found"
+          exit 1
+        fi
+        
         NEXT_VERSION="${{ steps.read-version.outputs.next_version }}"
         
         # Update version in gradle.properties
@@ -132,7 +146,22 @@ runs:
       env:
         GITHUB_TOKEN: ${{ inputs.release_pat }}
       run: |
-        git add gradle.properties
+        GRADLE_PROPERTIES_DIR="${{ inputs.gradle_properties_path }}"
+        # Remove trailing slash if present
+        GRADLE_PROPERTIES_DIR="${GRADLE_PROPERTIES_DIR%/}"
+        # Construct full path
+        if [ -n "$GRADLE_PROPERTIES_DIR" ]; then
+          GRADLE_PROPERTIES="${GRADLE_PROPERTIES_DIR}/gradle.properties"
+        else
+          GRADLE_PROPERTIES="gradle.properties"
+        fi
+        
+        if [ ! -f "$GRADLE_PROPERTIES" ]; then
+          echo "::error::gradle.properties file not found"
+          exit 1
+        fi
+        
+        git add $GRADLE_PROPERTIES
         
         # Check if there are changes to commit
         if git diff --staged --quiet; then
