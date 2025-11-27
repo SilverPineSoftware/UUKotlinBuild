@@ -1,0 +1,93 @@
+name: 'UU Distribute to Firebase'
+description: 'Upload an Android AAB to Firebase App Distribution'
+
+inputs:
+  firebase_credentials:
+    description: 'Firebase credentials encoded in base64'
+    required: true
+  firebase_app_id:
+    description: 'Firebase app ID'
+    required: true
+  distribution_group:
+    description: 'Firebase Distribution Group'
+    required: false
+  release_notes_content:
+    description: 'Release Notes File Content'
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Download all artifacts
+      uses: actions/download-artifact@v5
+      with:
+        pattern: '*-build-artifacts-*'
+        path: build-artifacts
+
+    - name: Extract build artifacts
+      id: extract-artifacts
+      shell: bash
+      run: |
+        
+        BINARY_PATH=$(ls build-artifacts/bundle/release/*.aab)
+        echo "Binary Path: $BINARY_PATH"
+        
+        if [ -z $BINARY_PATH ]; then
+          echo "No Binary file found!"
+          ls -R
+          exit 1
+        fi
+        
+        # Get absolute path
+        BINARY_ABSOLUTE_PATH=$(realpath "$BINARY_PATH")
+        echo "binary_path=$BINARY_ABSOLUTE_PATH" >> $GITHUB_OUTPUT
+        echo "Absolute Binary Path: $BINARY_ABSOLUTE_PATH"
+
+    - name: Install Firebase CLI
+      run: |
+        echo "Installing Firebase CLI"
+        npm install -g firebase-tools
+      shell: bash
+    
+    - name: Upload to Firebase
+      shell: bash
+      run: |
+        echo "Exracting Firebase Credentials"
+        echo "${{ inputs.firebase_credentials }}" | base64 --decode > firebase-credentials.json
+        CREDENTIALS_FULL_PATH=$(realpath firebase-credentials.json)
+        echo "CREDENTIALS_FULL_PATH: $CREDENTIALS_FULL_PATH"
+        
+        export GOOGLE_APPLICATION_CREDENTIALS="${CREDS_FILE}"
+        
+        BINARY_PATH=${{ steps.extract-artifacts.outputs.binary_path }}
+        echo "BINARY_PATH: $BINARY_PATH"
+        
+        FIREBASE_APP_ID=${{ inputs.firebase_app_id }}
+        echo "FIREBASE_APP_ID: $FIREBASE_APP_ID"
+        
+        echo "Extracting Release Notes Content"
+        echo "${{ inputs.release_notes_content }}" > release-notes.txt
+        RELEASE_NOTES_PATH=$(realpath release-notes.txt)
+        echo "RELEASE_NOTES_PATH: $RELEASE_NOTES_PATH"
+        
+        DISTRIBUTION_GROUP=${{ inputs.distribution_group }}
+        echo "DISTRIBUTION_GROUP: $DISTRIBUTION_GROUP"
+        
+        echo "Uploading to Firebase"
+        firebase appdistribution:distribute \
+          "$BINARY_PATH" \
+      	  --app "${FIREBASE_APP_ID}" \
+	      --release-notes-file "${RELEASE_NOTES_PATH}" \
+          --groups "$DISTRIBUTION_GROUP"
+  
+    - name: Cleanup
+      shell: bash
+      if: always()
+      run: |
+        rm -f firebase-credentials.json
+        rm -f release-notes.txt
+
+
