@@ -79,8 +79,8 @@ runs:
         echo "Uploading to Firebase"
         firebase appdistribution:distribute \
           "$BINARY_PATH" \
-      	  --app "${FIREBASE_APP_ID}" \
-	      --release-notes-file "${RELEASE_NOTES_PATH}" \
+          --app "$FIREBASE_APP_ID" \
+          --release-notes-file "$RELEASE_NOTES_PATH" \
           --groups "$DISTRIBUTION_GROUP"
   
     - name: Cleanup
