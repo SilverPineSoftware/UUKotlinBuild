@@ -105,6 +105,8 @@ runs:
         DISTRIBUTION_GROUP=${{ inputs.distribution_group }}
         echo "DISTRIBUTION_GROUP: $DISTRIBUTION_GROUP"
         
+        RELEASE_NOTES_PATH=release-notes.txt
+        
         echo "Uploading to Firebase"
         firebase appdistribution:distribute \
           "$BINARY_PATH" \
