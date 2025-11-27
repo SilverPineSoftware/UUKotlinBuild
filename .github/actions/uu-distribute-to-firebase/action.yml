@@ -8,11 +8,11 @@ inputs:
   firebase_app_id:
     description: 'Firebase app ID'
     required: true
+  full_version:
+    description: 'Full build version'
+    required: false
   distribution_group:
     description: 'Firebase Distribution Group'
-    required: false
-  release_notes_content:
-    description: 'Release Notes File Content'
     required: false
 
 runs:
@@ -51,6 +51,40 @@ runs:
         echo "Installing Firebase CLI"
         npm install -g firebase-tools
       shell: bash
+      
+    - name: Generate Release Notes
+      shell: bash
+      run: |
+        LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+        if [ -z "$LAST_TAG" ]; then
+          GIT_HISTORY=$(git log --pretty=format:"%h %s%b")
+        else
+          GIT_HISTORY=$(git log "$LAST_TAG"..HEAD --pretty=format:"%h %s%b")
+        fi
+         
+        BUILD_BRANCH=$(git branch --show-current)
+        BUILD_HASH=$(git rev-parse HEAD)
+        BUILD_DATE=$(date +"%Y-%m-%d %H:%M:%S %z")
+        BUILD_VERSION=${{ inputs.full_version }}
+         
+        DOC_FILE_CONTENT="
+        BuildVersion: ${BUILD_VERSION}
+        BuildBranch: ${BUILD_BRANCH}
+        BuildHash: ${BUILD_HASH}
+        BuildDate: ${BUILD_DATE}
+         
+        Commits since last release:
+         
+        $GIT_HISTORY
+        "
+        
+        echo $DOC_FILE_CONTENT
+        
+        DOCS_FILE=release-notes.txt
+        rm -rf "${DOCS_FILE}"
+        echo "${DOC_FILE_CONTENT}" > "${DOCS_FILE}"
+        head -c 16384 "${DOCS_FILE}" # Firebase has limits on this, so just truncate
+ 
     
     - name: Upload to Firebase
       shell: bash
@@ -67,11 +101,6 @@ runs:
         
         FIREBASE_APP_ID=${{ inputs.firebase_app_id }}
         echo "FIREBASE_APP_ID: $FIREBASE_APP_ID"
-        
-        echo "Extracting Release Notes Content"
-        echo "${{ inputs.release_notes_content }}" > release-notes.txt
-        RELEASE_NOTES_PATH=$(realpath release-notes.txt)
-        echo "RELEASE_NOTES_PATH: $RELEASE_NOTES_PATH"
         
         DISTRIBUTION_GROUP=${{ inputs.distribution_group }}
         echo "DISTRIBUTION_GROUP: $DISTRIBUTION_GROUP"
