@@ -37,13 +37,22 @@ on:
         required: false
       SIGNING_PASSWORD:
         required: false
+    outputs:
+      full_version:
+        description: 'The full build suffix with build number and branch'
+        value: ${{ jobs.build.outputs.full_version }}
+
 
 jobs:
   build:
     name: Do Build
     runs-on: macos-latest
+    outputs:
+      full_version: ${{ steps.build.outputs.full_version }}
+    
     steps:
       - name: Build
+        id: build
         uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-build@main
         with:
           module_name: ${{ inputs.module_name }}
