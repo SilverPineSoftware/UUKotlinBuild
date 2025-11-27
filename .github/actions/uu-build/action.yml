@@ -69,7 +69,6 @@ runs:
       shell: bash
     
     - name: Assemble Release
-      if: inputs.bundle_release == 'false'
       run: | 
         if [ -n "${{ inputs.module_folder }}" ]; then
           cd "${{ inputs.module_folder }}"
