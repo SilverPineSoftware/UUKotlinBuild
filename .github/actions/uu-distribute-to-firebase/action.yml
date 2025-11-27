@@ -32,7 +32,7 @@ runs:
       shell: bash
       run: |
         
-        BINARY_PATH=$(ls build-artifacts/bundle/release/*.aab)
+        BINARY_PATH=$(ls build-artifacts/apk/release/*.apk)
         echo "Binary Path: $BINARY_PATH"
         
         if [ -z $BINARY_PATH ]; then
