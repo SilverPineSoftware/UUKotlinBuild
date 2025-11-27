@@ -60,7 +60,7 @@ runs:
         CREDENTIALS_FULL_PATH=$(realpath firebase-credentials.json)
         echo "CREDENTIALS_FULL_PATH: $CREDENTIALS_FULL_PATH"
         
-        export GOOGLE_APPLICATION_CREDENTIALS="${CREDS_FILE}"
+        export GOOGLE_APPLICATION_CREDENTIALS="${CREDENTIALS_FULL_PATH}"
         
         BINARY_PATH=${{ steps.extract-artifacts.outputs.binary_path }}
         echo "BINARY_PATH: $BINARY_PATH"
