@@ -10,7 +10,7 @@ inputs:
     required: true
   full_version:
     description: 'Full build version'
-    required: false
+    required: true
   distribution_group:
     description: 'Firebase Distribution Group'
     required: false

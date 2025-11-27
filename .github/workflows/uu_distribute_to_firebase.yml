@@ -10,9 +10,9 @@ on:
         required: false
         type: string
         default: ''
-      release_notes_content:
-        description: 'Release Notes File Content'
-        required: false
+      full_version:
+        description: 'Full Build Version'
+        required: true
         type: string
         default: ''
     secrets:
@@ -30,7 +30,7 @@ jobs:
         uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-distribute-to-firebase@main
         with:
           distribution_group: ${{ inputs.distribution_group }}
-          release_notes_content: ${{ inputs.release_notes_content }}
+          full_version: ${{ inputs.full_version }}
           firebase_credentials: ${{ secrets.FIREBASE_CREDENTIALS }}
           firebase_app_id: ${{ secrets.FIREBASE_APP_ID }}
 
