@@ -69,8 +69,7 @@ runs:
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@v2
         with:
-          service_account_key: ${{ steps.extract-credentials.outputs.google_play_credentials_path }}
-          export_default_credentials: true
+          credentials_json: ${{ steps.extract-credentials.outputs.google_play_credentials_path }}
       
       - name: Upload to Google Play
         shell: bash
