@@ -62,7 +62,7 @@ runs:
         run: |
           echo "Exracting Google Play Credentials"
           echo "${{ inputs.google_play_credentials }}" | base64 --decode > google-credentials.json
-          CREDENTIALS_JSON=$(cat google-credentials.json)
+          CREDENTIALS_JSON=$(cat google-credentials.json  | jq -c .)
           echo "CREDENTIALS_JSON: $CREDENTIALS_JSON"
           echo "google_play_credentials=$CREDENTIALS_JSON" >> $GITHUB_OUTPUT
           
