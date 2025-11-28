@@ -71,6 +71,11 @@ runs:
 #         with:
 #           credentials_json: '${{ steps.extract-credentials.google_play_credentials }}'
 
+      - name: 'Auth with Google Cloud'
+        uses: 'google-github-actions/auth@v3'
+        with:
+          credentials_json: ${{ inputs.google_play_credentials }}
+
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v3'
 
