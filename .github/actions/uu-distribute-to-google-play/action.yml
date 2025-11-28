@@ -55,6 +55,12 @@ runs:
           MAPPING_ABSOLUTE_PATH=$(realpath "$MAPPING_PATH")
           echo "MAPPING_PATH: $MAPPING_PATH"
           echo "mapping_path=$MAPPING_PATH" >> $GITHUB_OUTPUT
+          
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          service_account_key: ${{ fromJSON(fromBase64(inputs.google_play_credentials)) }}
+          export_default_credentials: true
       
       - name: Upload to Google Play
         shell: bash
