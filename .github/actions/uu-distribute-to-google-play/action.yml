@@ -56,88 +56,88 @@ runs:
           echo "MAPPING_PATH: $MAPPING_PATH"
           echo "mapping_path=$MAPPING_PATH" >> $GITHUB_OUTPUT
       
-    - name: Upload to Google Play
-      shell: bash
-      run: |
-        echo "Exracting Google Play Credentials"
-        echo "${{ inputs.google_play_credentials }}" | base64 --decode > google-credentials.json
-        CREDENTIALS_FULL_PATH=$(realpath google-credentials.json)
-        echo "CREDENTIALS_FULL_PATH: $CREDENTIALS_FULL_PATH"
+      - name: Upload to Google Play
+        shell: bash
+        run: |
+          echo "Exracting Google Play Credentials"
+          echo "${{ inputs.google_play_credentials }}" | base64 --decode > google-credentials.json
+          CREDENTIALS_FULL_PATH=$(realpath google-credentials.json)
+          echo "CREDENTIALS_FULL_PATH: $CREDENTIALS_FULL_PATH"
         
-        export GOOGLE_APPLICATION_CREDENTIALS="${CREDENTIALS_FULL_PATH}"
+          export GOOGLE_APPLICATION_CREDENTIALS="${CREDENTIALS_FULL_PATH}"
         
-        BINARY_PATH=${{ steps.extract-artifacts.outputs.binary_path }}
-        echo "BINARY_PATH: $BINARY_PATH"
+          BINARY_PATH=${{ steps.extract-artifacts.outputs.binary_path }}
+          echo "BINARY_PATH: $BINARY_PATH"
         
-        MAPPING_PATH=${{ steps.extract-artifacts.outputs.mapping_path }}
-        echo "MAPPING_PATH: $MAPPING_PATH"
+          MAPPING_PATH=${{ steps.extract-artifacts.outputs.mapping_path }}
+          echo "MAPPING_PATH: $MAPPING_PATH"
         
-        echo "Uploading to Google Play"
+          echo "Uploading to Google Play"
         
-        PACKAGE_NAME=${{ inputs.package_name }}
-        TRACK=${{ inputs.distribution_track }}
-        RELEASE_NOTES="Release notes here"
+          PACKAGE_NAME=${{ inputs.package_name }}
+          TRACK=${{ inputs.distribution_track }}
+          RELEASE_NOTES="Release notes here"
         
-        # Authenticate (if not already done)
-        gcloud auth activate-service-account --key-file="${CREDENTIALS_FULL_PATH}"
+          # Authenticate (if not already done)
+          gcloud auth activate-service-account --key-file="${CREDENTIALS_FULL_PATH}"
         
-        # Get access token with the correct scope
-        ACCESS_TOKEN=$(gcloud auth print-access-token --scopes=https://www.googleapis.com/auth/androidpublisher)
+          # Get access token with the correct scope
+          ACCESS_TOKEN=$(gcloud auth print-access-token --scopes=https://www.googleapis.com/auth/androidpublisher)
         
-        echo "ACCESS_TOKEN: $ACCESS_TOKEN"
+          echo "ACCESS_TOKEN: $ACCESS_TOKEN"
         
-        # Create edit
-        echo "Creating Edit for package $PACKAGE_NAME"
-        EDIT_ID=$(curl -s -X POST \
-          "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PACKAGE_NAME}/edits" \
-          -H "Authorization: Bearer ${ACCESS_TOKEN}" \
-          -H "Content-Type: application/json" \
-          | jq -r '.id')
+          # Create edit
+          echo "Creating Edit for package $PACKAGE_NAME"
+          EDIT_ID=$(curl -s -X POST \
+            "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PACKAGE_NAME}/edits" \
+            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+            -H "Content-Type: application/json" \
+            | jq -r '.id')
         
-        echo "Created edit: ${EDIT_ID}"
+          echo "Created edit: ${EDIT_ID}"
         
-        # Upload AAB
-        echo "Uploading AAB"
-        BUNDLE_VERSION_CODE=$(curl -s -X POST \
-          "https://androidpublisher.googleapis.com/upload/androidpublisher/v3/applications/${PACKAGE_NAME}/edits/${EDIT_ID}/bundles?uploadType=media" \
-          -H "Authorization: Bearer ${ACCESS_TOKEN}" \
-          -H "Content-Type: application/octet-stream" \
-          --data-binary @"${BINARY_PATH}" \
-          | jq -r '.versionCode')
+          # Upload AAB
+          echo "Uploading AAB"
+          BUNDLE_VERSION_CODE=$(curl -s -X POST \
+            "https://androidpublisher.googleapis.com/upload/androidpublisher/v3/applications/${PACKAGE_NAME}/edits/${EDIT_ID}/bundles?uploadType=media" \
+            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary @"${BINARY_PATH}" \
+            | jq -r '.versionCode')
         
-        echo "Uploaded bundle with version code: ${BUNDLE_VERSION_CODE}"
+          echo "Uploaded bundle with version code: ${BUNDLE_VERSION_CODE}"
         
-        # Set track and release notes
-        echo "Setting track and release notes"
-        curl -X PUT \
-          "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PACKAGE_NAME}/edits/${EDIT_ID}/tracks/${TRACK}" \
-          -H "Authorization: Bearer ${ACCESS_TOKEN}" \
-          -H "Content-Type: application/json" \
-          -d "{
-            \"releases\": [{
-              \"versionCodes\": [\"${BUNDLE_VERSION_CODE}\"],
-              \"releaseNotes\": [{
-                \"language\": \"en-US\",
-                \"text\": \"${RELEASE_NOTES}\"
-              }],
-              \"status\": \"completed\"
-            }]
-          }"
+          # Set track and release notes
+          echo "Setting track and release notes"
+          curl -X PUT \
+            "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PACKAGE_NAME}/edits/${EDIT_ID}/tracks/${TRACK}" \
+            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"releases\": [{
+                \"versionCodes\": [\"${BUNDLE_VERSION_CODE}\"],
+                \"releaseNotes\": [{
+                  \"language\": \"en-US\",
+                  \"text\": \"${RELEASE_NOTES}\"
+                }],
+                \"status\": \"completed\"
+              }]
+            }"
         
-        # Commit edit
-        echo "Committing edit"
-        curl -X POST \
-          "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PACKAGE_NAME}/edits/${EDIT_ID}:commit" \
-          -H "Authorization: Bearer ${ACCESS_TOKEN}"
+          # Commit edit
+          echo "Committing edit"
+          curl -X POST \
+            "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PACKAGE_NAME}/edits/${EDIT_ID}:commit" \
+            -H "Authorization: Bearer ${ACCESS_TOKEN}"
         
-        echo "Upload complete!"
+          echo "Upload complete!"
         
         
-    - name: Cleanup
-      shell: bash
-      if: always()
-      run: |
-        rm -f google-credentials.json
-        rm -f release-notes.txt
+      - name: Cleanup
+        shell: bash
+        if: always()
+        run: |
+          rm -f google-credentials.json
+          rm -f release-notes.txt
 
 
