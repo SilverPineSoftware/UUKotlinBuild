@@ -26,10 +26,10 @@ on:
       
 jobs:
   build:
-    name: Distribute to Firebase
+    name: Distribute to Google Play
     runs-on: macos-latest
     steps:
-      - name: Distribute to Firebase
+      - name: Distribute to Google Play
         uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-distribute-to-google-play@main
         with:
           package_name: ${{ inputs.package_name }}
