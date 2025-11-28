@@ -62,14 +62,14 @@ runs:
         run: |
           echo "Exracting Google Play Credentials"
           echo "${{ inputs.google_play_credentials }}" | base64 --decode > google-credentials.json
-          CREDENTIALS_FULL_PATH=$(realpath google-credentials.json)
-          echo "CREDENTIALS_FULL_PATH: $CREDENTIALS_FULL_PATH"
-          echo "google_play_credentials_path=$CREDENTIALS_FULL_PATH" >> $GITHUB_OUTPUT
+          CREDENTIALS_JSON=$(cat google-credentials.json)
+          echo "CREDENTIALS_JSON: $CREDENTIALS_JSON"
+          echo "google_play_credentials=$CREDENTIALS_JSON" >> $GITHUB_OUTPUT
           
       - name: 'Auth with Google Cloud'
         uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: '${{ steps.inputs.extract-credentials.google_play_credentials_path }}'
+          credentials_json: '${{ steps.extract-credentials.google_play_credentials }}'
 
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v3'
