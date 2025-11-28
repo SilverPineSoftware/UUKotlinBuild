@@ -75,6 +75,7 @@ runs:
         uses: 'google-github-actions/setup-gcloud@v3'
 
       - name: 'Use gcloud CLI'
+        shell: bash
         run: 'gcloud info'
       
       - name: Upload to Google Play
