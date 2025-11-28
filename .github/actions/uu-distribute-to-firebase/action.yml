@@ -1,5 +1,5 @@
 name: 'UU Distribute to Firebase'
-description: 'Upload an Android AAB to Firebase App Distribution'
+description: 'Upload an Android APK to Firebase App Distribution'
 
 inputs:
   firebase_credentials:
