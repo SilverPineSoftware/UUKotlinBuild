@@ -56,10 +56,20 @@ runs:
           echo "MAPPING_PATH: $MAPPING_PATH"
           echo "mapping_path=$MAPPING_PATH" >> $GITHUB_OUTPUT
           
+      - name: Extract Google Play Credentials File
+        id: extract-credentials
+        shell: bash
+        run: |
+          echo "Exracting Google Play Credentials"
+          echo "${{ inputs.google_play_credentials }}" | base64 --decode > google-credentials.json
+          CREDENTIALS_FULL_PATH=$(realpath google-credentials.json)
+          echo "CREDENTIALS_FULL_PATH: $CREDENTIALS_FULL_PATH"
+          echo "google_play_credentials_path=$"CREDENTIALS_FULL_PATH" >> $GITHUB_OUTPUT
+          
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@v2
         with:
-          service_account_key: ${{ fromJSON(fromBase64(inputs.google_play_credentials)) }}
+          service_account_key: ${{ steps.extract-credentials.outputs.google_play_credentials_path }}
           export_default_credentials: true
       
       - name: Upload to Google Play
