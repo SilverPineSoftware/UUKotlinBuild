@@ -56,28 +56,11 @@ runs:
           echo "MAPPING_PATH: $MAPPING_PATH"
           echo "mapping_path=$MAPPING_PATH" >> $GITHUB_OUTPUT
           
-#       - name: Extract Google Play Credentials File
-#         id: extract-credentials
-#         shell: bash
-#         run: |
-#           echo "Exracting Google Play Credentials"
-#           echo "${{ inputs.google_play_credentials }}" | base64 --decode > google-credentials.json
-#           CREDENTIALS_JSON=$(cat google-credentials.json  | jq -c .)
-#           echo "CREDENTIALS_JSON: $CREDENTIALS_JSON"
-#           echo "google_play_credentials=$CREDENTIALS_JSON" >> $GITHUB_OUTPUT
-#           
-#       - name: 'Auth with Google Cloud'
-#         uses: 'google-github-actions/auth@v3'
-#         with:
-#           credentials_json: '${{ steps.extract-credentials.google_play_credentials }}'
-
-      - name: 'Auth with Google Cloud'
-        uses: 'google-github-actions/auth@v3'
-        with:
-          credentials_json: ${{ inputs.google_play_credentials }}
-
       - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v3'
+        shell: bash
+        run: |
+          echo "Downloading gcloug from brew"
+          brew update && brew install --cask google-cloud-sdk
 
       - name: 'Use gcloud CLI'
         shell: bash
