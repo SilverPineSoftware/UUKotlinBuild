@@ -64,7 +64,7 @@ runs:
           echo "${{ inputs.google_play_credentials }}" | base64 --decode > google-credentials.json
           CREDENTIALS_FULL_PATH=$(realpath google-credentials.json)
           echo "CREDENTIALS_FULL_PATH: $CREDENTIALS_FULL_PATH"
-          echo "google_play_credentials_path=$"CREDENTIALS_FULL_PATH" >> $GITHUB_OUTPUT
+          echo "google_play_credentials_path=$CREDENTIALS_FULL_PATH" >> $GITHUB_OUTPUT
           
       - name: Setup gcloud CLI
         uses: google-github-actions/setup-gcloud@v2
