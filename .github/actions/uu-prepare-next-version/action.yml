@@ -85,20 +85,26 @@ runs:
           exit 1
         fi
         
-        # Extract version number (format: version=1.2.3)
+        # Extract version number (format: version=1, version=1.2, or version=1.2.3)
         CURRENT_VERSION=$(echo "$VERSION_LINE" | sed 's/version=//')
         echo "Current version: $CURRENT_VERSION"
         
-        # Validate version format
-        if [[ ! "$CURRENT_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-          echo "::error::Version format is invalid. Expected x.y.z, got: $CURRENT_VERSION"
+        # Validate version format (1, 2, or 3 digits separated by dots)
+        if [[ ! "$CURRENT_VERSION" =~ ^[0-9]+(\.[0-9]+){0,2}$ ]]; then
+          echo "::error::Version format is invalid. Expected x, x.y, or x.y.z, got: $CURRENT_VERSION"
           exit 1
         fi
         
-        # Split version into parts and increment patch
-        IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
-        PATCH=$((PATCH + 1))
-        NEXT_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+        # Split version into parts and increment the last element
+        IFS='.' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+        NUM_PARTS=${#VERSION_PARTS[@]}
+        
+        # Increment the last element
+        LAST_INDEX=$((NUM_PARTS - 1))
+        VERSION_PARTS[$LAST_INDEX]=$((${VERSION_PARTS[$LAST_INDEX]} + 1))
+        
+        # Reconstruct version string
+        NEXT_VERSION=$(IFS='.'; echo "${VERSION_PARTS[*]}")
         
         echo "Next version: $NEXT_VERSION"
         echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
