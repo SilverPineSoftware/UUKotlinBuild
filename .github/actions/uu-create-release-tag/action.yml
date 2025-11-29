@@ -3,7 +3,7 @@ description: 'Update gradle.properties version and create a release tag'
 
 inputs:
   version:
-    description: 'Release version (e.g., 1.0.0). If not specified, uses version from gradle.properties'
+    description: 'Release version (e.g., 1, 1.0, or 1.0.0). If not specified, uses version from gradle.properties'
     required: false
   gradle_properties_path:
     description: 'Optional folder path where gradle.properties exists. Defaults to root if empty'
@@ -54,14 +54,14 @@ runs:
             exit 1
           fi
           
-          # Extract version number (format: version=1.2.3)
+          # Extract version number (format: version=1, version=1.2, or version=1.2.3)
           VERSION=$(echo "$VERSION_LINE" | sed 's/version=//')
           echo "Using version from gradle.properties: $VERSION"
         fi
         
-        # Validate version format
-        if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-          echo "::error::Version must be in format x.y.z (e.g., 1.0.0), got: $VERSION"
+        # Validate version format (1, 2, or 3 digits separated by dots)
+        if [[ ! "$VERSION" =~ ^[0-9]+(\.[0-9]+){0,2}$ ]]; then
+          echo "::error::Version must be in format x, x.y, or x.y.z (e.g., 1, 1.0, or 1.0.0), got: $VERSION"
           exit 1
         fi
         
