@@ -16,12 +16,12 @@ def replaceWithSamplePart(String namespace) {
 def sampleAppId = replaceWithSamplePart(uu_namespace)
 
 android {
-    compileSdkVersion uu_target_sdk
+    compileSdk = uu_target_sdk.toInteger()
 
     defaultConfig {
         applicationId sampleAppId
-        minSdkVersion uu_min_sdk
-        targetSdkVersion uu_target_sdk
+        minSdk = uu_min_sdk.toInteger()
+        targetSdk = uu_target_sdk.toInteger()
         versionCode 1
         versionName "1.0"
 
@@ -36,8 +36,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility uu_java_version
-        targetCompatibility uu_java_version
+        sourceCompatibility JavaVersion.toVersion(uu_java_version)
+        targetCompatibility JavaVersion.toVersion(uu_java_version)
     }
 
     kotlinOptions {

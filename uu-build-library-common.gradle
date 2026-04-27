@@ -5,29 +5,32 @@ def uuTrimAndQuote = { val ->
     return "\"" + val.trim() + "\""
 }
 
-def getBuildBranch = { ->
-
-    def val = null
+// Gradle 9.0 removed script-level `exec { }`. Use `providers.exec { }`,
+// which returns a lazy ExecOutput and is configuration-cache safe.
+def uuRunGit = { String... args ->
+    def val = ""
 
     try {
-        //	git rev-parse --abbrev-ref HEAD
-        def cmdLineOut = new ByteArrayOutputStream()
-        exec {
-            commandLine "git", "rev-parse", "--abbrev-ref", "HEAD"
-            standardOutput = cmdLineOut
+        def execOutput = providers.exec {
+            commandLine(["git", *args])
+            ignoreExitValue = true
         }
 
-        val = "$cmdLineOut"
-
+        def exitValue = execOutput.result.get().exitValue
+        if (exitValue == 0) {
+            val = execOutput.standardOutput.asText.get()
+        } else {
+            project.logger.lifecycle("git ${args.join(' ')} exited with $exitValue")
+        }
     } catch (ex) {
-        project.logger.lifecycle("Caught exception getting branch name from git: $ex")
-    }
-
-    if (val == null) {
-        val = ""
+        project.logger.lifecycle("Caught exception running git ${args.join(' ')}: $ex")
     }
 
     return val
+}
+
+def getBuildBranch = { ->
+    return uuRunGit("rev-parse", "--abbrev-ref", "HEAD")
 }
 
 ext {
@@ -35,27 +38,7 @@ ext {
 }
 
 def getBuildCommitHash = { ->
-
-    def val = null
-
-    try {
-        //	git rev-parse --abbrev-ref HEAD
-        def cmdLineOut = new ByteArrayOutputStream()
-        exec {
-            commandLine "git", "rev-parse", "HEAD"
-            standardOutput = cmdLineOut
-        }
-
-        val = "$cmdLineOut"
-
-    } catch (ex) {
-        project.logger.lifecycle("Caught exception getting branch commit hash from git: $ex")
-    }
-
-    if (val == null) {
-        val = ""
-    }
-
+    def val = uuRunGit("rev-parse", "HEAD")
     def result = uuTrimAndQuote(val)
     project.logger.lifecycle("buildCommitHash: $result")
     return result
@@ -95,7 +78,7 @@ android {
 }
 
 tasks.register('androidSourcesJar', Jar) {
-    archiveClassifier.set('sources')
+    archiveClassifier = 'sources'
     if (project.plugins.findPlugin("com.android.library")) {
         // For Android libraries
         from android.sourceSets.main.java.srcDirs
@@ -178,11 +161,11 @@ afterEvaluate {
 
 
 android {
-    compileSdkVersion uu_target_sdk
+    compileSdk = uu_target_sdk.toInteger()
 
     defaultConfig {
-        minSdkVersion uu_min_sdk
-        targetSdkVersion uu_target_sdk
+        minSdk = uu_min_sdk.toInteger()
+        targetSdk = uu_target_sdk.toInteger()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -196,8 +179,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility uu_java_version
-        targetCompatibility uu_java_version
+        sourceCompatibility JavaVersion.toVersion(uu_java_version)
+        targetCompatibility JavaVersion.toVersion(uu_java_version)
     }
 
     kotlinOptions {
