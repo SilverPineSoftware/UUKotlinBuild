@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 def replaceWithSamplePart(String namespace) {
     def parts = namespace.tokenize('.')
@@ -40,8 +41,10 @@ android {
         targetCompatibility JavaVersion.toVersion(uu_java_version)
     }
 
-    kotlinOptions {
-        jvmTarget = uu_java_version
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.fromTarget(uu_java_version.toString())
+        }
     }
 
     namespace sampleAppId
