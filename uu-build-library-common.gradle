@@ -1,5 +1,6 @@
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 def uuTrimAndQuote = { val ->
     return "\"" + val.trim() + "\""
@@ -183,8 +184,10 @@ android {
         targetCompatibility JavaVersion.toVersion(uu_java_version)
     }
 
-    kotlinOptions {
-        jvmTarget = uu_java_version
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.fromTarget(uu_java_version.toString())
+        }
     }
 
     buildFeatures {
