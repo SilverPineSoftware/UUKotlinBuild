@@ -42,7 +42,7 @@ android {
 
     kotlin {
         compilerOptions {
-            jvmTarget = JvmTarget.fromTarget(uu_java_version.toString())
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(uu_java_version.toString())
         }
     }
 
