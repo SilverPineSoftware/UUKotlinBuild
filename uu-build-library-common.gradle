@@ -178,15 +178,8 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.toVersion(uu_java_version)
-        targetCompatibility JavaVersion.toVersion(uu_java_version)
-    }
-
     kotlin {
-        compilerOptions {
-            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(uu_java_version.toString())
-        }
+        jvmToolchain(uu_java_version)
     }
 
     buildFeatures {
