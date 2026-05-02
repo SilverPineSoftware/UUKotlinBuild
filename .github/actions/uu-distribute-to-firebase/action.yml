@@ -19,13 +19,13 @@ runs:
   using: 'composite'
   steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0
         fetch-tags: true
     
     - name: Download all artifacts
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v8
       with:
         pattern: '*-build-artifacts-*'
         path: build-artifacts

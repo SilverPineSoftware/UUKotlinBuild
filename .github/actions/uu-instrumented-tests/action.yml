@@ -43,7 +43,7 @@ runs:
         java_version: ${{ inputs.java_version }}
   
     - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
+      uses: android-actions/setup-android@v4
       
     - name: Cache Android System Images
       uses: actions/cache@v4
@@ -80,7 +80,7 @@ runs:
       shell: bash
           
     - name: Upload Test Results
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ steps.repo-name.outputs.name }}-${{ inputs.module_name }}-instrumented-test-results-${{ inputs.configuration }}-${{ steps.prepare.outputs.version }}
         path: ${{ inputs.module_folder }}/${{ inputs.module_name }}/build/reports/androidTests
