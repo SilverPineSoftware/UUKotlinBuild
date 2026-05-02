@@ -102,7 +102,7 @@ runs:
       shell: bash
 
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ steps.repo-name.outputs.name }}-${{ inputs.module_name }}-build-artifacts-${{ steps.prepare.outputs.version }}
         path: ${{ inputs.module_folder }}/${{ inputs.module_name }}/build/outputs
