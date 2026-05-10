@@ -50,7 +50,7 @@ jobs:
       GPR_TOKEN: ${{ secrets.RELEASE_PAT || github.token }}
     steps:
       - name: Publish Snapshot
-        uses: ./.github/actions/uu-publish-snapshot
+        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-publish-snapshot@main
         with:
           module_name: ${{ inputs.module_name }}
           module_folder: ${{ inputs.module_folder }}

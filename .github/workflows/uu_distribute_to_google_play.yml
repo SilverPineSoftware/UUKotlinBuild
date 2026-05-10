@@ -30,7 +30,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Distribute to Google Play
-        uses: ./.github/actions/uu-distribute-to-google-play
+        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-distribute-to-google-play@main
         with:
           package_name: ${{ inputs.package_name }}
           full_version: ${{ inputs.full_version }}

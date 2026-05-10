@@ -53,7 +53,7 @@ jobs:
     steps:
       - name: Build
         id: build
-        uses: ./.github/actions/uu-build
+        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-build@main
         with:
           module_name: ${{ inputs.module_name }}
           module_folder: ${{ inputs.module_folder }}
