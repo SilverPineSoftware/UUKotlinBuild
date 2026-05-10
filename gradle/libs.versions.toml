@@ -1,0 +1,13 @@
+[versions]
+agp = "9.2.1"
+kotlin = "2.3.21"
+nexusPublish = "2.0.0"
+
+[libraries]
+android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+nexus-publish = { module = "io.github.gradle-nexus:publish-plugin", version.ref = "nexusPublish" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
