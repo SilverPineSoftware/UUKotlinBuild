@@ -4,6 +4,10 @@ permissions:
  
 on:
   workflow_call:
+    secrets:
+      RELEASE_PAT:
+        description: 'PAT with read:packages for SilverpineSoftware GitHub Packages (Gradle plugins from UUKotlinBuild). Pass caller repo secret.'
+        required: false
     inputs:
       runner:
         description: 'Runner environment'
@@ -37,6 +41,9 @@ jobs:
   tests:
     name: Run Unit Tests
     runs-on: ${{ inputs.runner }}
+    env:
+      # Do not override GITHUB_TOKEN; Gradle reads GPR_TOKEN in settings.gradle.kts (UUKotlinCore).
+      GPR_TOKEN: ${{ secrets.RELEASE_PAT || github.token }}
     steps:
       - name: Run Tests
         uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-tests@main

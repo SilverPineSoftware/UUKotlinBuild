@@ -16,6 +16,9 @@ on:
         type: string
         default: '.'
     secrets:
+      RELEASE_PAT:
+        description: 'PAT with read:packages for SilverpineSoftware GitHub Packages (Gradle resolves plugins before publish).'
+        required: false
       MAVEN_CENTRAL_NEXUS_URL:
         required: true
       MAVEN_CENTRAL_SNAPSHOT_URL:
@@ -38,6 +41,8 @@ jobs:
   publish-release:
     name: Publish Release
     runs-on: macos-latest
+    env:
+      GPR_TOKEN: ${{ secrets.RELEASE_PAT || github.token }}
     steps:
       - name: Publish Release
         uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-publish-release@main

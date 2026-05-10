@@ -4,6 +4,10 @@ permissions:
  
 on:
   workflow_call:
+    secrets:
+      RELEASE_PAT:
+        description: 'PAT with read:packages for SilverpineSoftware GitHub Packages (Gradle plugins from UUKotlinBuild). Pass caller repo secret.'
+        required: false
     inputs:
       configuration:
         description: 'Test configuration to run'
@@ -42,6 +46,8 @@ jobs:
   instrumented-tests:
     name: Run Android Instrumented Tests (${{ inputs.configuration }})
     runs-on: ${{ inputs.runner }}
+    env:
+      GPR_TOKEN: ${{ secrets.RELEASE_PAT || github.token }}
     steps:
       - name: Run Instrumented Tests
         uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-instrumented-tests@main
