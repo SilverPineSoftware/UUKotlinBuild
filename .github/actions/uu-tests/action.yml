@@ -26,7 +26,7 @@ runs:
   steps:
     - name: Prepare Build
       id: prepare
-      uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-build-prepare@main
+      uses: ./.github/actions/uu-build-prepare
       with:
         module_name: ${{ inputs.module_name }}
         module_folder: ${{ inputs.module_folder }}

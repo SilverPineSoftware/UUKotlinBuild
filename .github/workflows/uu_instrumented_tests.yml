@@ -50,7 +50,7 @@ jobs:
       GPR_TOKEN: ${{ secrets.RELEASE_PAT || github.token }}
     steps:
       - name: Run Instrumented Tests
-        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-instrumented-tests@main
+        uses: ./.github/actions/uu-instrumented-tests
         with:
           configuration: ${{ inputs.configuration }}
           module_name: ${{ inputs.module_name }}

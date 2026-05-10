@@ -27,7 +27,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Distribute to Firebase
-        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-distribute-to-firebase@main
+        uses: ./.github/actions/uu-distribute-to-firebase
         with:
           distribution_group: ${{ inputs.distribution_group }}
           full_version: ${{ inputs.full_version }}

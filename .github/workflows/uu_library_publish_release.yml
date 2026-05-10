@@ -45,7 +45,7 @@ jobs:
       GPR_TOKEN: ${{ secrets.RELEASE_PAT || github.token }}
     steps:
       - name: Publish Release
-        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-publish-release@main
+        uses: ./.github/actions/uu-publish-release
         with:
           module_name: ${{ inputs.module_name }}
           module_folder: ${{ inputs.module_folder }}

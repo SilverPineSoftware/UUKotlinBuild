@@ -34,7 +34,7 @@ runs:
       
     - name: Update Version
       id: update-version
-      uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-update-version@main
+      uses: ./.github/actions/uu-update-version
       with:
         module_folder: ${{ inputs.module_folder }}
         build_suffix: ${{ inputs.build_suffix }}
