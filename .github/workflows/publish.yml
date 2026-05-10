@@ -21,11 +21,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-     - name: Setup Java
-       uses: actions/setup-java@v5
-       with:
-         distribution: ${{ vars.UU_JAVA_DISTRIBUTION }}
-         java-version: ${{ vars.UU_JAVA_VERSION }}
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: ${{ vars.UU_JAVA_DISTRIBUTION }}
+          java-version: ${{ vars.UU_JAVA_VERSION }}
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
