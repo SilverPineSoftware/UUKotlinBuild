@@ -1,5 +1,4 @@
-
-def replaceWithSamplePart(String namespace) {
+static def replaceWithSamplePart(String namespace) {
     def parts = namespace.tokenize('.')
     if (parts.size() >= 2) {
         // Insert "sample" before the last part

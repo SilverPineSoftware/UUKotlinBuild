@@ -79,15 +79,8 @@ android {
 
 tasks.register('androidSourcesJar', Jar) {
     archiveClassifier = 'sources'
-    if (project.plugins.findPlugin("com.android.library")) {
-        // For Android libraries
-        from android.sourceSets.main.java.srcDirs
-        from android.sourceSets.main.kotlin.srcDirs
-    } else {
-        // For pure Kotlin libraries, in case you have them
-        from sourceSets.main.java.srcDirs
-        from sourceSets.main.kotlin.srcDirs
-    }
+    from android.sourceSets.main.java.srcDirs
+    from android.sourceSets.main.kotlin.srcDirs
 }
 
 signing {
@@ -116,17 +109,11 @@ afterEvaluate {
                 artifactId uu_publish_artifact_id
                 version BUILD_VERSION
 
-                // Two artifacts, the `aar` (or `jar`) and the sources
-                if (project.plugins.findPlugin("com.android.library")) {
-                    from components.release
-                } else {
-                    from components.java
-                }
+                from components.release
 
                 artifact androidSourcesJar
                 //artifact javadocJar
 
-                // Mostly self-explanatory metadata
                 pom {
                     name = uu_publish_artifact_id
                     description = uu_publish_description
