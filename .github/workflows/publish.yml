@@ -1,21 +1,38 @@
 name: Publish to GitHub Packages
 
-on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version to publish'
-        required: true
-        type: string
-
 permissions:
-  contents: read
+  contents: write
   packages: write
+
+on:
+  create:
+    tags:
+      - '*.*.*'
 
 jobs:
 
+  verify:
+    name: Verify build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: ${{ vars.UU_JAVA_DISTRIBUTION }}
+          java-version: ${{ vars.UU_JAVA_VERSION }}
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Build
+        run: ./gradlew build --no-daemon
+
   publish:
-    name: Publish convention plugins
+    name: Publish convention plugins and catalog
+    needs: [verify]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,4 +51,23 @@ jobs:
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./gradlew publishAllPublicationsToGitHubPackagesRepository -Puu_build_version=${{ inputs.version }}
+        run: ./gradlew publishAllPublicationsToGitHubPackagesRepository -Pversion=${{ github.ref_name }}
+
+  create-release:
+    needs: [verify, publish]
+    uses: ./.github/workflows/uu_create_release.yml
+    secrets:
+      UU_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  prepare-next-version:
+    needs: [create-release]
+    runs-on: ubuntu-latest
+    if: success()
+    permissions:
+      contents: write
+    steps:
+      - name: Prepare Next Version
+        uses: ./.github/actions/uu-prepare-next-version
+        continue-on-error: true
+        with:
+          release_pat: ${{ secrets.RELEASE_PAT }}

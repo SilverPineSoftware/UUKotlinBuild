@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.silverpine.uu"
-version = providers.gradleProperty("uu_build_version").orElse("0.0.0-SNAPSHOT").get()
+version = providers.gradleProperty("version").orElse("0.0.0-SNAPSHOT").get()
 
 catalog {
     versionCatalog {

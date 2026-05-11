@@ -101,34 +101,31 @@ uu_java_version=17
 
 ## Releasing a new version
 
-1. Push a `vX.Y.Z` tag:
+1. Run **Actions → Create Release Tag → Run workflow** (optional version; otherwise uses `version=` from `gradle.properties`), or create a numeric tag locally:
 
    ```bash
-   git tag v1.2.3
-   git push origin v1.2.3
+   git tag 1.2.3
+   git push origin 1.2.3
    ```
 
-2. The `Publish to GitHub Packages` workflow runs and publishes
-   `com.silverpine.uu:uu-kotlin-build:1.2.3` plus the four plugin markers
-   (the leading `v` is stripped from the artifact version).
+   Tags must match `x`, `x.y`, or `x.y.z` (no `v` prefix). That matches the publish workflow filter `*.*.*` for three-part versions.
 
-3. Consumers update their plugin version: `id("com.silverpine.uu.library") version "1.2.3"`.
+2. **Publish to GitHub Packages** runs on the new tag: it verifies with `./gradlew build`, publishes `com.silverpine.uu:uu-kotlin-build` and the plugin markers (and the published version catalog), then creates a **GitHub Release** for the tag, then runs **Prepare Next Version** on `develop` when configured.
 
-You can also trigger the workflow manually from the Actions tab via *Run workflow* and
-type any version string (useful for SNAPSHOT-like builds).
+3. Consumers update their plugin / catalog version to match the release (e.g. `id("com.silverpine.uu.library") version "1.2.3"`).
 
 ## Building locally
 
 ```bash
 ./gradlew assemble
-./gradlew publishToMavenLocal -Puu_build_version=0.0.1-LOCAL
+./gradlew publishToMavenLocal -Pversion=0.0.1-LOCAL
 ```
 
 To dry-run the GitHub Packages flow against a local PAT:
 
 ```bash
 GITHUB_ACTOR=$USER GITHUB_TOKEN=ghp_xxx ./gradlew \
-  publishAllPublicationsToGitHubPackagesRepository -Puu_build_version=0.0.1-LOCAL
+  publishAllPublicationsToGitHubPackagesRepository -Pversion=0.0.1-LOCAL
 ```
 
 ## Notes
