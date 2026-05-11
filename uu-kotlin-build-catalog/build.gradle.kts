@@ -8,7 +8,15 @@ version = providers.gradleProperty("version").orElse("0.0.0-SNAPSHOT").get()
 
 catalog {
     versionCatalog {
+        // uu_build and Silverpine plugin aliases track root `version=` / `-Pversion` (gradle.properties); not duplicated in libs.versions.toml.
+        val releaseVersion =
+            providers.gradleProperty("version").orElse("0.0.0-SNAPSHOT").get()
         from(files(rootProject.layout.projectDirectory.file("gradle/libs.versions.toml")))
+        version("uu_build", releaseVersion)
+        plugin("uu-library", "com.silverpine.uu.library").versionRef("uu_build")
+        plugin("uu-library-app", "com.silverpine.uu.library-app").versionRef("uu_build")
+        plugin("uu-publish", "com.silverpine.uu.publish").versionRef("uu_build")
+        plugin("uu-android-test", "com.silverpine.uu.android-test").versionRef("uu_build")
     }
 }
 
