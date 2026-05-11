@@ -61,13 +61,9 @@ jobs:
 
   prepare-next-version:
     needs: [create-release]
-    runs-on: ubuntu-latest
     if: success()
-    permissions:
-      contents: write
-    steps:
-      - name: Prepare Next Version
-        uses: ./.github/actions/uu-prepare-next-version
-        continue-on-error: true
-        with:
-          release_pat: ${{ secrets.RELEASE_PAT }}
+    uses: ./.github/workflows/prepare-next-version.yml
+    with:
+      continue_on_error: true
+    secrets:
+      RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
