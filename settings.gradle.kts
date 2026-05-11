@@ -16,3 +16,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "UUKotlinBuild"
+
+include(":uu-kotlin-build-catalog")

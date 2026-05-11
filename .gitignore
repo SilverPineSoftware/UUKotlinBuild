@@ -3,3 +3,5 @@
 /.gradle
 /build
 /local.properties
+/uu-kotlin-build-catalog/build/publications
+/uu-kotlin-build-catalog/build/tmp
