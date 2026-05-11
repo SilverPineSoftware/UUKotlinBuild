@@ -67,7 +67,7 @@ jobs:
       contents: write
     steps:
       - name: Prepare Next Version
-        uses: SilverPineSoftware/UUGithubActions/.github/actions/uu-prepare-next-version@main
+        uses: SilverPineSoftware/UUGithubActions/.github/actions/uu-android-prepare-next-version@main
         continue-on-error: true
         with:
           release_pat: ${{ secrets.RELEASE_PAT }}
