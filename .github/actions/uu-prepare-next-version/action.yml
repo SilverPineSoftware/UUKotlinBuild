@@ -146,17 +146,6 @@ runs:
         echo "Updated gradle.properties:"
         grep "^version=" "$GRADLE_PROPERTIES"
 
-    - name: Bump SilverPineSoftware/UUKotlinBuild action refs
-      shell: bash
-      if: steps.verify-branches.outputs.branches_match == 'true'
-      run: |
-        NEXT_VERSION="${{ steps.read-version.outputs.next_version }}"
-        if [ -x scripts/uu-bump-action-refs.sh ]; then
-          scripts/uu-bump-action-refs.sh "$NEXT_VERSION"
-        else
-          echo "::warning::scripts/uu-bump-action-refs.sh not found or not executable; skipping ref bump"
-        fi
-
     - name: Commit and push to develop
       shell: bash
       if: steps.verify-branches.outputs.branches_match == 'true'
@@ -180,9 +169,6 @@ runs:
 
         # Stage gradle.properties and any .github ref bumps from the previous step.
         git add "$GRADLE_PROPERTIES"
-        if [ -d .github ]; then
-          git add .github
-        fi
 
         # Check if there are changes to commit
         if git diff --staged --quiet; then
