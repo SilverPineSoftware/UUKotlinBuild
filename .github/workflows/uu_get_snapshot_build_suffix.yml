@@ -18,5 +18,5 @@ jobs:
     
     steps:
       - name: Make Build Suffix
-        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-get-snapshot-build-suffix@0.0.23
+        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-get-snapshot-build-suffix@main
         id: get-build-suffix
