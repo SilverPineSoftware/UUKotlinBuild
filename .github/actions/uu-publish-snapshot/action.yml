@@ -50,7 +50,7 @@ runs:
   steps:
 
     - name: Build
-      uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-build@main
+      uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-build@0.0.22
       with:
         module_name: ${{ inputs.module_name }}
         module_folder: ${{ inputs.module_folder }}

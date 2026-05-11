@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Create Release Tag
         id: create-tag
-        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-create-release-tag@main
+        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-create-release-tag@0.0.22
         with:
           version: ${{ inputs.version }}
           gradle_properties_path: ${{ inputs.gradle_properties_path }}
