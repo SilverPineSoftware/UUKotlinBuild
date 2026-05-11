@@ -27,6 +27,10 @@ jobs:
     name: Prepare Next Version
     runs-on: ubuntu-latest
     steps:
+      # Local composite actions must exist on disk before `uses: ./.github/actions/...` is resolved.
+      - name: Checkout
+        uses: actions/checkout@v6
+
       - name: Prepare Next Version
         uses: ./.github/actions/uu-prepare-next-version
         continue-on-error: ${{ inputs.continue_on_error }}
