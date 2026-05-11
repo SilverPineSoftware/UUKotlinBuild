@@ -46,7 +46,7 @@ jobs:
       GPR_TOKEN: ${{ secrets.RELEASE_PAT || github.token }}
     steps:
       - name: Run Tests
-        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-tests@0.0.22
+        uses: SilverPineSoftware/UUKotlinBuild/.github/actions/uu-tests@0.0.23
         with:
           module_name: ${{ inputs.module_name }}
           module_folder: ${{ inputs.module_folder }}
