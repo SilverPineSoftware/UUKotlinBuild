@@ -55,15 +55,19 @@ jobs:
 
   create-release:
     needs: [verify, publish]
-    uses: ./.github/workflows/uu_create_release.yml
+    uses: SilverPineSoftware/UUGithubActions/.github/workflows/uu_create_release.yml@main
     secrets:
       UU_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   prepare-next-version:
     needs: [create-release]
+    runs-on: ubuntu-latest
     if: success()
-    uses: ./.github/workflows/prepare-next-version.yml
-    with:
-      continue_on_error: true
-    secrets:
-      RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
+    permissions:
+      contents: write
+    steps:
+      - name: Prepare Next Version
+        uses: SilverPineSoftware/UUGithubActions/.github/actions/uu-prepare-next-version@main
+        continue-on-error: true
+        with:
+          release_pat: ${{ secrets.RELEASE_PAT }}
