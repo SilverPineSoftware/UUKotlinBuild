@@ -47,6 +47,11 @@ android {
                     apiLevel = 33
                     systemImageSource = "aosp-atd"
                 }
+                create("pixel7api33Net") {
+                    device = "Pixel 7"
+                    apiLevel = 33
+                    systemImageSource = "aosp"
+                }
                 create("pixel8api34") {
                     device = "Pixel 8"
                     apiLevel = 34
@@ -72,6 +77,9 @@ android {
             groups {
                 register("quick") {
                     targetDevices.add(localDevices.getByName("pixel7api33"))
+                }
+                register("quickNet") {
+                    targetDevices.add(localDevices.getByName("pixel7api33Net"))
                 }
                 register("ci") {
                     targetDevices.add(localDevices.getByName("pixel1api27"))
