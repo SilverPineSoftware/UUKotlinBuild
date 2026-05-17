@@ -22,12 +22,12 @@ The catalog version always matches the convention-plugin release version. The ca
 
 | Plugin id | Catalog alias | Apply on | What it does |
 | --------- | ------------- | -------- | ------------ |
-| `com.silverpine.uu.library` | `uu-library` | Android library module | `com.android.library`, Maven Publish, signing, `BuildConfig` stamping from git, release AAR + sources JAR, POM metadata from `gradle.properties` |
+| `com.silverpine.uu.library` | `uu-library` | Android library module | `com.android.library`, Maven Publish, signing, `BuildConfig` stamping from git, release AAR + sources JAR + **Dokka Javadoc JAR**, POM metadata from `gradle.properties`; local API docs via `./gradlew :library:dokkaGenerate` |
 | `com.silverpine.uu.library-app` | `uu-library-app` | Sample `app` module | Android application with `applicationId` derived from `uu_namespace` (inserts `.sample` segment), SDK/Java from shared properties |
 | `com.silverpine.uu.publish` | `uu-publish` | Root project | Sonatype / Nexus Publish when `MAVEN_CENTRAL_*` and related env vars are set (publish CI only) |
 | `com.silverpine.uu.android-test` | `uu-android-test` | Library module (with instrumented tests) | Gradle Managed Devices (Pixel API 27–36, device groups `quick`, `quickNet`, `ci`, `complete`), unit-test Android resources |
 
-The catalog also publishes AGP, Kotlin, Nexus Publish, and `kotlin-compose` plugin aliases so consumers do not duplicate those versions in every repo.
+The catalog also publishes AGP, Kotlin, Nexus Publish, Dokka, and `kotlin-compose` plugin aliases so consumers do not duplicate those versions in every repo.
 
 ---
 
@@ -99,7 +99,24 @@ Gradle merges properties from several sources. In practice:
 
 So: set org-wide defaults in `~/.gradle/gradle.properties`, commit repo-specific publish metadata under `library/`, and use root `gradle.properties` for SDK/Java (and `uu_namespace` when the repo has a sample app). CI can override `uu_build`, SDK, and Java via organization variables without editing the repo.
 
-### 3. Consumer `settings.gradle.kts`
+### 3. API documentation (Dokka)
+
+The `uu.library` plugin applies [Dokka](https://kotlinlang.org/docs/dokka-gradle.html) and publishes a Maven **`javadoc` classifier** JAR alongside the AAR and sources JAR.
+
+| Task | Output |
+| ---- | ------ |
+| `./gradlew :library:dokkaGenerate` | HTML + Javadoc (open `library/build/dokka/html/index.html`) |
+| `./gradlew :library:dokkaGeneratePublicationHtml` | HTML only |
+| `./gradlew :library:dokkaGeneratePublicationJavadoc` | Javadoc-format HTML (used for the published JAR) |
+| `./gradlew :library:dokkaJavadocJar` | `*-javadoc.jar` artifact |
+
+KDoc in `src/main/java` is included. Source links point at `https://github.com/SilverpineSoftware/<uu_scm_module_name>/tree/main/<module-path>/src/main/java` (for `:library`, that is `library/src/main/java`).
+
+The version catalog also exposes `dokka` and `dokka-javadoc` plugin aliases if a repo needs Dokka on a non-library module.
+
+**Testing an unpublished UUKotlinBuild locally:** publish with `./gradlew publishToMavenLocal`, bump `uu_build` to that version, and add `mavenLocal()` to `pluginManagement.repositories` (before GitHub Packages) in the consumer `settings.gradle.kts`.
+
+### 4. Consumer `settings.gradle.kts`
 
 Register the catalog and authenticate to GitHub Packages (pattern used across UU repos):
 
@@ -151,7 +168,7 @@ dependencyResolutionManagement {
 }
 ```
 
-### 4. Root `build.gradle.kts`
+### 5. Root `build.gradle.kts`
 
 ```kotlin
 plugins {
@@ -168,7 +185,7 @@ plugins {
 }
 ```
 
-### 5. Library module `build.gradle.kts`
+### 6. Library module `build.gradle.kts`
 
 ```kotlin
 plugins {
@@ -185,7 +202,7 @@ dependencies {
 }
 ```
 
-### 6. Sample app module (optional)
+### 7. Sample app module (optional)
 
 ```kotlin
 plugins {
@@ -196,7 +213,7 @@ plugins {
 
 App-specific dependencies stay in the app module; use the repo’s own `libs` catalog for Compose BOM and UI libraries.
 
-### 7. Example `gradle.properties` layout
+### 8. Example `gradle.properties` layout
 
 **Root** (`gradle.properties`):
 

@@ -2,9 +2,14 @@ package com.silverpine.uu
 
 import java.text.SimpleDateFormat
 import java.util.Date
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.bundling.Jar
+import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 
 plugins {
     id("com.android.library")
+    id("org.jetbrains.dokka")
+    id("org.jetbrains.dokka-javadoc")
     `maven-publish`
     signing
 }
@@ -107,6 +112,41 @@ android {
     }
 }
 
+val githubSourceSubpath =
+    project.path.removePrefix(":").replace(':', '/') + "/src/main/java"
+
+dokka {
+    moduleName.set(artifactIdProp)
+    moduleVersion.set(buildVersion)
+
+    dokkaSourceSets.configureEach {
+        documentedVisibilities.set(setOf(VisibilityModifier.Public))
+        skipDeprecated.set(true)
+        reportUndocumented.set(false)
+
+        sourceLink {
+            localDirectory.set(layout.projectDirectory.dir("src/main/java"))
+            remoteUrl(
+                "https://github.com/SilverpineSoftware/$scmModuleName/tree/main/$githubSourceSubpath",
+            )
+            remoteLineSuffix.set("#L")
+        }
+    }
+}
+
+val dokkaJavadocJar =
+    tasks.register<Jar>("dokkaJavadocJar") {
+        group = "documentation"
+        description = "Javadoc JAR containing Dokka-generated API documentation (KDoc)"
+        archiveClassifier.set("javadoc")
+        from(
+            tasks.named("dokkaGeneratePublicationJavadoc").flatMap {
+                @Suppress("UNCHECKED_CAST")
+                (it as org.jetbrains.dokka.gradle.tasks.DokkaGeneratePublicationTask).outputDirectory
+            },
+        )
+    }
+
 signing {
     useInMemoryPgpKeys(
         System.getenv("SIGNING_KEY_ID"),
@@ -124,6 +164,7 @@ afterEvaluate {
                 version = buildVersion
 
                 from(components["release"])
+                artifact(dokkaJavadocJar)
 
                 pom {
                     name.set(artifactIdProp)

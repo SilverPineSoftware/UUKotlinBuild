@@ -31,6 +31,8 @@ dependencies {
     implementation(libs.android.gradlePlugin)
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.nexus.publish)
+    implementation(libs.dokka.gradlePlugin)
+    implementation(libs.dokka.javadoc.gradlePlugin)
 }
 
 publishing {
