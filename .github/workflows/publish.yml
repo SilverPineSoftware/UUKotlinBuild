@@ -71,3 +71,22 @@ jobs:
         continue-on-error: true
         with:
           release_pat: ${{ secrets.RELEASE_PAT }}
+
+  update-org-uu-kotlin-build:
+    name: Update UU_KOTLIN_BUILD org variable
+    needs: [publish]
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Set UU_KOTLIN_BUILD to released version
+        env:
+          GH_TOKEN: ${{ secrets.CI_ORG_VARS_PAT }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::CI_ORG_VARS_PAT repository secret is not set."
+            exit 1
+          fi
+          gh variable set UU_KOTLIN_BUILD \
+            --org SilverpineSoftware \
+            --body "${{ github.ref_name }}"
+          echo "UU_KOTLIN_BUILD=${{ github.ref_name }} (org SilverpineSoftware)"

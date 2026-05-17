@@ -297,10 +297,22 @@ Managed-device groups are defined in `uu.android-test`. CI usually runs the `qui
 ## Releasing a new UUKotlinBuild version
 
 1. Bump `version=` in this repo’s `gradle.properties` on `develop` (or use **Create Release Tag** in Actions).
-2. Create and push a numeric tag `x.y.z` (no `v` prefix). The **Publish to GitHub Packages** workflow runs `./gradlew build`, publishes plugins + catalog, creates a GitHub Release, and may bump the next patch on `develop`.
-3. Update the org variable **`UU_KOTLIN_BUILD`** (and/or developers’ `uu_build` in `~/.gradle/gradle.properties`) to the new tag.
+2. Create and push a numeric tag `x.y.z` (no `v` prefix). The **Publish to GitHub Packages** workflow runs `./gradlew build`, publishes plugins + catalog, creates a GitHub Release, may bump the next patch on `develop`, and sets org variable **`UU_KOTLIN_BUILD`** to the tag (via `ORG_VARS_PAT`).
+3. Developers may still pin a different `uu_build` in `~/.gradle/gradle.properties` locally.
 
-Consumers do not need to change plugin ids—only `uu_build` / `UU_KOTLIN_BUILD`.
+Consumers do not need to change plugin ids—CI picks up `UU_KOTLIN_BUILD` on the next workflow run.
+
+### `ORG_VARS_PAT` (UUKotlinBuild repository secret)
+
+Used only by **Publish to GitHub Packages** to run `gh variable set UU_KOTLIN_BUILD` on org **SilverpineSoftware** after a successful publish.
+
+| Token type | Required permission |
+| ---------- | ------------------- |
+| **Classic PAT** | **`admin:org`** (this is the minimum scope for [org Actions variables API](https://docs.github.com/en/rest/actions/variables)) |
+
+The GitHub user that owns the PAT must be allowed to manage organization Actions variables (typically an org owner). No `repo` scope is required for this step.
+
+Store the PAT as repository secret **`ORG_VARS_PAT`** on **UUKotlinBuild** (Settings → Secrets and variables → Actions).
 
 ---
 
