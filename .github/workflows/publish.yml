@@ -86,7 +86,7 @@ jobs:
             echo "::error::CI_ORG_VARS_PAT repository secret is not set."
             exit 1
           fi
-          gh variable set UU_KOTLIN_BUILD \
-            --org SilverpineSoftware \
-            --body "${{ github.ref_name }}"
-          echo "UU_KOTLIN_BUILD=${{ github.ref_name }} (org SilverpineSoftware)"
+          gh api --method PATCH \
+            orgs/SilverpineSoftware/actions/variables/UU_KOTLIN_BUILD \
+            -f value="${{ github.ref_name }}"
+          echo "UU_KOTLIN_BUILD=${{ github.ref_name }} (org SilverpineSoftware)" 
