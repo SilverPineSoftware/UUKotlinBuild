@@ -16,6 +16,8 @@ mockito_core = "5.23.0"
 mockito_inline = "5.2.0"
 mockito_junit_jupiter = "5.23.0"
 mockito_kotlin = "6.3.0"
+robolectric = "4.16"
+junit5_robolectric_extension = "0.9.0"
 
 # androidTest
 espresso_core = "3.7.0"
@@ -44,6 +46,8 @@ mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito_cor
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito_inline" }
 mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito_junit_jupiter" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito_kotlin" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+junit5-robolectric-extension = { module = "tech.apter.junit5.jupiter:robolectric-extension", version.ref = "junit5_robolectric_extension" }
 
 # androidTest
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junit" }
@@ -59,3 +63,4 @@ nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "n
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "dokka" }
+junit5-robolectric-extension = { id = "tech.apter.junit5.jupiter.robolectric-extension-gradle-plugin", version.ref = "junit5_robolectric_extension" }
