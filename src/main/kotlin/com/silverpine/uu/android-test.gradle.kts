@@ -7,6 +7,16 @@ plugins {
     id("com.android.library")
 }
 
+// Match the host by default; CI can explicitly override with -Puu.testedAbi=x86_64.
+val managedDeviceAbi = providers.gradleProperty("uu.testedAbi")
+    .orElse(providers.systemProperty("os.arch").map { architecture ->
+        when (architecture.lowercase()) {
+            "aarch64", "arm64" -> "arm64-v8a"
+            "amd64", "x86_64" -> "x86_64"
+            else -> error("Unsupported host architecture: $architecture")
+        }
+    })
+
 configure<LibraryExtension> {
     testOptions {
         unitTests {
@@ -15,6 +25,10 @@ configure<LibraryExtension> {
 
         managedDevices {
             localDevices {
+                configureEach {
+                    testedAbi = managedDeviceAbi.get()
+                }
+
                 create("pixel1api27") {
                     device = "Pixel"
                     apiLevel = 27
