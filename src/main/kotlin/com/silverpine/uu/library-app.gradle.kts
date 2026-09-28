@@ -2,6 +2,9 @@ package com.silverpine.uu
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+import com.android.build.api.dsl.ApplicationExtension
+import org.gradle.kotlin.dsl.configure
+
 plugins {
     id("com.android.application")
 }
@@ -27,7 +30,7 @@ val minSdkProp = requiredProp("uu_min_sdk").toInt()
 val targetSdkProp = requiredProp("uu_target_sdk").toInt()
 val javaVersionProp = requiredProp("uu_java_version")
 
-android {
+configure<ApplicationExtension> {
     compileSdk = targetSdkProp
     namespace = sampleAppId
 

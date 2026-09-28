@@ -1,9 +1,11 @@
 package com.silverpine.uu
 
+import com.android.build.api.dsl.LibraryExtension
 import java.text.SimpleDateFormat
 import java.util.Date
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.bundling.Jar
+import org.gradle.kotlin.dsl.configure
 import org.jetbrains.dokka.gradle.engine.parameters.VisibilityModifier
 
 plugins {
@@ -70,7 +72,7 @@ val minSdkProp = requiredProp("uu_min_sdk").toInt()
 val targetSdkProp = requiredProp("uu_target_sdk").toInt()
 val javaVersionProp = requiredProp("uu_java_version")
 
-android {
+configure<LibraryExtension> {
     compileSdk = targetSdkProp
     namespace = namespaceProp
 
