@@ -28,11 +28,19 @@ val namespaceProp = requiredProp("uu_namespace")
 val sampleAppId = replaceWithSamplePart(namespaceProp)
 val minSdkProp = requiredProp("uu_min_sdk").toInt()
 val targetSdkProp = requiredProp("uu_target_sdk").toInt()
+val compileSdkProp = requiredProp("uu_compile_sdk").toInt()
+val compileSdkMinorProp = requiredProp("uu_compile_sdk_minor").toInt()
 val javaVersionProp = requiredProp("uu_java_version")
 
 configure<ApplicationExtension> {
     compileSdk = targetSdkProp
     namespace = sampleAppId
+
+    compileSdk {
+        version = release(compileSdkProp) {
+            minorApiLevel = compileSdkMinorProp
+        }
+    }
 
     defaultConfig {
         applicationId = sampleAppId
